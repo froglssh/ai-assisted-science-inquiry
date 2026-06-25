@@ -57,7 +57,8 @@
       linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
     color: var(--text-primary);
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.7;
     padding-bottom: 80px;
     overflow-x: hidden;
     transition: background-color var(--transition), color var(--transition);
@@ -76,8 +77,8 @@
     position: absolute;
     top: 24px;
     right: 24px;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -85,7 +86,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 24px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: var(--transition);
     z-index: 1000;
@@ -139,7 +140,7 @@
 
   .hero h1 {
     font-family: 'Noto Serif TC', serif;
-    font-size: clamp(36px, 5vw, 56px);
+    font-size: clamp(42px, 6vw, 64px);
     font-weight: 900;
     letter-spacing: -1px;
     background: linear-gradient(135deg, var(--text-primary) 30%, var(--primary) 100%);
@@ -148,7 +149,7 @@
   }
 
   .hero-author {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     color: var(--gold);
     font-weight: 500;
     letter-spacing: 2px;
@@ -168,11 +169,11 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 24px;
+    padding: 14px 28px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 17px;
     transition: var(--transition);
     cursor: pointer;
   }
@@ -235,13 +236,13 @@
   
   .engine-card h2 {
     font-family: 'Noto Serif TC', serif;
-    font-size: 1.6rem;
+    font-size: 1.85rem;
     font-weight: 700;
     margin-bottom: 12px;
     color: var(--text-primary);
   }
   .engine-card p {
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-secondary);
     margin-bottom: 24px;
     line-height: 1.7;
@@ -251,11 +252,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 6px;
     font-weight: 600;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
     transition: var(--transition);
   }
   .engine-teach-btn {
@@ -273,7 +274,7 @@
   /* ── 探究地圖流程導覽 ── */
   .section-title {
     font-family: 'Noto Serif TC', serif;
-    font-size: 2rem;
+    font-size: 2.3rem;
     font-weight: 700;
     margin-bottom: 24px;
     text-align: center;
@@ -310,7 +311,7 @@
     position: relative;
   }
   .map-node h3 {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--primary);
     margin-bottom: 10px;
     display: flex;
@@ -318,7 +319,7 @@
     gap: 8px;
   }
   .map-node p {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text-secondary);
     line-height: 1.6;
   }
@@ -327,7 +328,7 @@
     background: var(--btn-secondary);
     padding: 2px 10px;
     border-radius: 12px;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: bold;
     color: var(--gold);
     border: 1px solid var(--border);
@@ -346,10 +347,10 @@
     background: var(--btn-secondary);
     border: 1px solid var(--border);
     color: var(--text-secondary);
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 20px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     transition: var(--transition);
   }
@@ -413,15 +414,15 @@
   }
   
   .file-icon {
-    font-size: 18px;
-    padding: 6px;
+    font-size: 20px;
+    padding: 8px;
     border-radius: 6px;
     background: var(--btn-secondary);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    min-width: 44px;
+    min-width: 48px;
   }
   .icon-html { color: var(--primary); border: 1px solid var(--primary-glow); }
   .icon-pdf { color: #f43f5e; border: 1px solid rgba(244,63,94,0.2); }
@@ -429,7 +430,7 @@
   .icon-video { color: var(--gold); border: 1px solid var(--gold-glow); }
 
   .resource-card h3 {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 600;
     color: var(--text-primary);
   }
@@ -442,9 +443,9 @@
   
   .action-link {
     text-decoration: none;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 4px;
     transition: var(--transition);
     display: inline-flex;
@@ -482,9 +483,9 @@
   .pedagogical-tips {
     background: rgba(16, 185, 129, 0.03);
     border-left: 3px solid var(--primary);
-    padding: 12px 16px;
+    padding: 14px 18px;
     border-radius: 0 6px 6px 0;
-    font-size: 13px;
+    font-size: 16px;
     color: var(--text-secondary);
     line-height: 1.7;
   }
@@ -499,13 +500,18 @@
     padding-top: 30px;
     text-align: center;
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 16px;
   }
   footer a {
     color: var(--primary);
     text-decoration: none;
   }
   footer a:hover { text-decoration: underline; }
+
+  /* 覆蓋卡片內副標題 12px 字體使其放大至 15px */
+  .card-title-section div p {
+    font-size: 15px !important;
+  }
 </style>
 </head>
 <body class="dark">
@@ -1113,7 +1119,7 @@
   <!-- FOOTER -->
   <footer>
     <p>AI 輔助自然探究與實作教學平台 ｜ 臺北市立麗山高中 生物科 林獻升老師</p>
-    <p style="margin-top:8px; font-size:12px; color:var(--text-secondary);">
+    <p style="margin-top:8px; font-size:15px; color:var(--text-secondary);">
       本專案程式與靜態網頁皆發布於 <a href="https://github.com/froglssh/ai-assisted-science-inquiry" target="_blank">GitHub</a> ｜ © 2026
     </p>
   </footer>
