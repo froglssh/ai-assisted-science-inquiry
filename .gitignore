@@ -6,3 +6,7 @@
 *.docx
 .DS_Store
 ~
+
+# Allow presentation images
+!**/origin_image/*.png
+
