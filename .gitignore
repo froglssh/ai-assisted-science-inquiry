@@ -8,5 +8,5 @@
 ~
 
 # Allow presentation images
-!**/origin_image/*.png
+!origin_image/*.png
 
