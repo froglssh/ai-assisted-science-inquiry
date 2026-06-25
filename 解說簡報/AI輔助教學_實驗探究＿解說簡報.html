@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI輔助教學_實驗探究</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', 'PingFang TC', '微軟正黑體', sans-serif;
+    background: #1a1d23;
+    color: #e8e8e8;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  #header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #2a6496;
+    flex-shrink: 0;
+  }
+  #header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #a8d8f0;
+    letter-spacing: 0.05em;
+  }
+  #header .subtitle {
+    font-size: 0.8rem;
+    color: #7fb3d3;
+    margin-top: 2px;
+  }
+  #slide-counter {
+    font-size: 0.95rem;
+    color: #a8d8f0;
+    font-weight: 600;
+    background: rgba(255,255,255,0.08);
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── Main content ── */
+  #main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Left: slide image (2/3) ── */
+  #slide-panel {
+    width: 66.667%;
+    background: #0d1117;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border-right: 2px solid #2a3a4a;
+    position: relative;
+  }
+  #slide-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    transition: opacity 0.3s ease;
+  }
+  #slide-img.fade { opacity: 0; }
+
+  /* ── Right: text panel (1/3) ── */
+  #text-panel {
+    width: 33.333%;
+    display: flex;
+    flex-direction: column;
+    background: #12181f;
+    overflow: hidden;
+  }
+  #text-header {
+    padding: 12px 18px 8px;
+    border-bottom: 1px solid #2a3a4a;
+    flex-shrink: 0;
+  }
+  #text-slide-num {
+    font-size: 0.75rem;
+    color: #7fb3d3;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  #text-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 20px;
+    font-size: 1.13rem;
+    line-height: 1.9;
+    color: #d0dbe8;
+    scrollbar-width: thin;
+    scrollbar-color: #2a6496 #1a1d23;
+  }
+  #text-content::-webkit-scrollbar { width: 5px; }
+  #text-content::-webkit-scrollbar-track { background: #1a1d23; }
+  #text-content::-webkit-scrollbar-thumb { background: #2a6496; border-radius: 4px; }
+
+  /* ── Controls ── */
+  #controls {
+    background: #131820;
+    border-top: 2px solid #2a3a4a;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    background: #1e3a5f;
+    color: #a8d8f0;
+    border: 1px solid #2a6496;
+    border-radius: 8px;
+    padding: 7px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ctrl-btn:hover { background: #2a6496; color: #fff; }
+  .ctrl-btn:active { transform: scale(0.97); }
+  .ctrl-btn.active { background: #2a7a1a; border-color: #4caf50; color: #b8f5b0; }
+  .ctrl-btn.danger { background: #5a1e1e; border-color: #c0392b; color: #ffb3b3; }
+
+  #speed-label { color: #7fb3d3; font-size: 0.85rem; font-weight: 600; }
+  #speed-select {
+    background: #1e3a5f;
+    color: #a8d8f0;
+    border: 1px solid #2a6496;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+
+  #progress-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: #2a3a4a;
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 80px;
+  }
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2a6496, #5cb3d4);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Fullscreen overlay ── */
+  #fullscreen-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 1000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #fullscreen-overlay.active { display: flex; }
+
+  #fs-img {
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+  }
+  #fs-img.fade { opacity: 0; }
+
+  #fs-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    padding: 20px 30px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #fullscreen-overlay:hover #fs-controls { opacity: 1; }
+
+  #fs-counter {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: rgba(0,0,0,0.4);
+    padding: 4px 12px;
+    border-radius: 12px;
+    pointer-events: none;
+  }
+
+  /* ── Footer ── */
+  #footer {
+    background: #0d1117;
+    border-top: 1px solid #1e2d3d;
+    padding: 6px 24px;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #4a7a9b;
+    flex-shrink: 0;
+  }
+
+  /* ── Light theme ── */
+  body.light {
+    background: #f0f4f8;
+    color: #1a2533;
+  }
+  body.light #header {
+    background: linear-gradient(135deg, #dbeeff 0%, #c2dff5 100%);
+    border-bottom: 2px solid #7fb3d3;
+  }
+  body.light #header h1 { color: #1a4a7a; }
+  body.light #header .subtitle { color: #3a7aaa; }
+  body.light #slide-counter {
+    color: #1a4a7a;
+    background: rgba(0,0,0,0.08);
+  }
+  body.light #slide-panel {
+    background: #e8eef4;
+    border-right: 2px solid #b8cfe0;
+  }
+  body.light #slide-img {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+  body.light #text-panel { background: #ffffff; }
+  body.light #text-header { border-bottom: 1px solid #c8dcea; }
+  body.light #text-slide-num { color: #3a7aaa; }
+  body.light #text-content {
+    color: #1e2d3d;
+    scrollbar-color: #7fb3d3 #e8eef4;
+  }
+  body.light #text-content::-webkit-scrollbar-track { background: #e8eef4; }
+  body.light #text-content::-webkit-scrollbar-thumb { background: #7fb3d3; }
+  body.light #controls {
+    background: #dce8f2;
+    border-top: 2px solid #b8cfe0;
+  }
+  body.light .ctrl-btn {
+    background: #c2dff5;
+    color: #1a4a7a;
+    border: 1px solid #7fb3d3;
+  }
+  body.light .ctrl-btn:hover { background: #7fb3d3; color: #fff; }
+  body.light .ctrl-btn.active { background: #2a7a1a; border-color: #4caf50; color: #fff; }
+  body.light .ctrl-btn.danger { background: #fde8e8; border-color: #e57373; color: #c0392b; }
+  body.light #speed-label { color: #3a7aaa; }
+  body.light #speed-select {
+    background: #c2dff5;
+    color: #1a4a7a;
+    border: 1px solid #7fb3d3;
+  }
+  body.light #progress-bar-wrap { background: #b8cfe0; }
+  body.light #timer-ring circle.bg { stroke: #b8cfe0; }
+  body.light #footer {
+    background: #dce8f2;
+    border-top: 1px solid #b8cfe0;
+    color: #3a6a8a;
+  }
+
+  /* ── Theme toggle btn special style ── */
+  #btn-theme { font-size: 1rem; min-width: 36px; padding: 7px 12px; }
+
+  /* autoplay timer ring */
+  #timer-ring {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  #timer-ring svg {
+    transform: rotate(-90deg);
+  }
+  #timer-ring circle.bg {
+    fill: none;
+    stroke: #2a3a4a;
+    stroke-width: 3;
+  }
+  #timer-ring circle.progress {
+    fill: none;
+    stroke: #4caf50;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 75.4;
+    stroke-dashoffset: 75.4;
+    transition: stroke-dashoffset 1s linear;
+  }
+  #timer-ring.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div id="header">
+  <div>
+    <h1>🔬 AI輔助教學：實驗探究</h1>
+    <div class="subtitle">AI賦能 · IA增能 · 打造智慧科學探究新課堂</div>
+  </div>
+  <div id="slide-counter">1 / 85</div>
+</div>
+
+<!-- ── Main ── -->
+<div id="main">
+  <!-- Left: Slide Image -->
+  <div id="slide-panel">
+    <img id="slide-img" src="origin_image/slide_01.png" alt="投影片 1">
+  </div>
+
+  <!-- Right: Text -->
+  <div id="text-panel">
+    <div id="text-header">
+      <div id="text-slide-num">Slide 1 解說</div>
+    </div>
+    <div id="text-content"></div>
+  </div>
+</div>
+
+<!-- ── Controls ── -->
+<div id="controls">
+  <button class="ctrl-btn" id="btn-prev" onclick="navigate(-1)">◀ 上一頁</button>
+  <button class="ctrl-btn" id="btn-next" onclick="navigate(1)">下一頁 ▶</button>
+
+  <div id="progress-bar-wrap">
+    <div id="progress-bar" style="width:1.18%"></div>
+  </div>
+
+  <div id="timer-ring" class="hidden">
+    <svg width="30" height="30" viewBox="0 0 30 30">
+      <circle class="bg" cx="15" cy="15" r="12"/>
+      <circle class="progress" id="timer-circle" cx="15" cy="15" r="12"/>
+    </svg>
+  </div>
+
+  <button class="ctrl-btn" id="btn-autoplay" onclick="toggleAutoplay()">▷ 自動播放</button>
+
+  <span id="speed-label">播放間隔</span>
+  <select id="speed-select" onchange="setSpeed(this.value)">
+    <option value="5">5 秒</option>
+    <option value="8">8 秒</option>
+    <option value="10" selected>10 秒</option>
+    <option value="15">15 秒</option>
+    <option value="20">20 秒</option>
+    <option value="30">30 秒</option>
+  </select>
+
+  <button class="ctrl-btn" id="btn-theme" onclick="toggleTheme()" title="切換背景色">🌙</button>
+
+  <button class="ctrl-btn" id="btn-fullscreen" onclick="enterFullscreen()">⛶ 全螢幕播放</button>
+</div>
+
+<!-- ── Fullscreen Overlay ── -->
+<div id="fullscreen-overlay">
+  <img id="fs-img" src="origin_image/slide_01.png" alt="全螢幕投影片">
+  <div id="fs-counter">1 / 85</div>
+  <div id="fs-controls">
+    <button class="ctrl-btn" onclick="navigate(-1, true)">◀ 上一頁</button>
+    <button class="ctrl-btn" id="fs-btn-autoplay" onclick="toggleAutoplay()">▷ 自動播放</button>
+    <span id="speed-label2">播放間隔</span>
+    <select id="speed-select2" onchange="setSpeed(this.value)">
+      <option value="5">5 秒</option>
+      <option value="8">8 秒</option>
+      <option value="10" selected>10 秒</option>
+      <option value="15">15 秒</option>
+      <option value="20">20 秒</option>
+      <option value="30">30 秒</option>
+    </select>
+    <button class="ctrl-btn" onclick="navigate(1, true)">下一頁 ▶</button>
+    <button class="ctrl-btn danger" onclick="exitFullscreen()">✕ 離開全螢幕</button>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div id="footer">
+  臺北市立麗山高中 &nbsp;|&nbsp; 林獻升 老師 &nbsp;|&nbsp; AI賦能自然科學探究與實作課程
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  投影片資料（85頁，林獻升老師風格改寫）
+// ═══════════════════════════════════════════════════
+const slides = [
+  // Slide 1
+  {
+    image: 'origin_image/slide_01.png',
+    text: `歡迎來到《AI賦能，IA增能：打造智慧科學探究新課堂》。這門課程由麗山高中生物科林獻升老師精心規劃，核心出發點很簡單——就是希望把生成式AI與行動載具的各種App，真正地融入高一到高三的探究與實作課堂，而不是讓它停留在示範用途的層次。
+
+封面上的吉祥物是蛙、蜥蜴與蝴蝶，代表了生物多樣性與自然觀察的本質。我們相信，這場結合AI的課堂轉變，不僅是技術工具的導入，更是一次幫助學生跨越技術門檻、重拾科學理性樂趣的典範轉移。`
+  },
+  // Slide 2
+  {
+    image: 'origin_image/slide_02.png',
+    text: `這張投影片呈現的是整套教學的「全流程藍圖」。
+
+科學探究從來不是線性的單一步驟，而是一個完整的歷程——從前期的問題發現、文獻檢索，到實驗現場的數據採集與視覺辨識，再到後期的成果統整與素養評量。海報中將各階段對應的AI工具一目了然地整理出來：Perplexity負責文獻查閱，Claude協助數據分析，Gemini用於示意圖生成，手機App則承擔顏色與計數的定量工作。
+
+我們希望透過這張藍圖，讓師生在開始行動之前，先對AI協同工作流的整體架構有一個清晰的輪廓。`
+  },
+  // Slide 3
+  {
+    image: 'origin_image/slide_03.png',
+    text: `本課程最核心的理念，是把AI（人工智慧）重新定位為「IA」——Intelligence Augmentation，智能增強。
+
+在教學現場，AI不是用來替學生寫報告或代替學生思考的，而是作為一種認知鷹架，幫助學生突破技術瓶頸，回到科學探究本身的樂趣。我們將這個理念具體落實在四個面向：在教學端，AI協助教師設計課程與命製素養考題；在實驗端，手機App與AI視覺技術提供數據量化與物種鑑定的支援；在師生互動端，AI扮演學生自主學習的引導者；在行政端，則提升陳情案件的處理效率。
+
+這四個方向加在一起，是一套完整的「增能」邏輯，而非簡單的功能替代。`
+  },
+  // Slide 4
+  {
+    image: 'origin_image/slide_04.png',
+    text: `這張投影片直接點出了第一線教學面臨的困境。
+
+108課綱的探究與實作課程，講求開放思考與手作實踐，立意非常好。但在實施過程中，我們持續觀察到兩個難解的張力：一方面，學生的技術瓶頸（數據統計困難、科學文獻閱讀緩慢）往往成為真正探究的阻礙；另一方面，學生產出的大量非結構化報告——手寫記錄、質性問答——也讓教師的批改負擔不斷加重。
+
+正是這兩個現實困境，促使我們認真思考如何引進AI，讓它在適當的環節扮演協同助理的角色，而不是邊緣化的點綴。`
+  },
+  // Slide 5
+  {
+    image: 'origin_image/slide_05.png',
+    text: `面對上述挑戰，我們提出的方案是「自帶裝置（BYOD）智慧實驗室」搭配「AI協同工作流」的整合模式。
+
+學生用自己手邊的手機與平板，配合放大鏡、ColorMeter、Tally Counter等輕量化App，把過去只能以感覺描述的觀察——「溶液顏色好像變深了」、「心跳感覺比較快」——轉化成可以記錄、可以比較的科學數值。這個轉化，看似簡單，卻是整個探究流程中最關鍵的一步：沒有可信的數據，後續的分析與寫作都只是空中樓閣。`
+  },
+  // Slide 6
+  {
+    image: 'origin_image/slide_06.png',
+    text: `在第二模組中，我們來認識目前課堂上最常用到的四個大型語言模型：ChatGPT、Microsoft Copilot、Gemini、Claude。
+
+這四個工具在課堂上不是互相替代的，而是各自有其最適合發揮的場景。接下來的幾頁，我們會逐一介紹它們的特性與實際在探究課程中的應用方式。把工具用對地方，才能讓AI真正發揮增能的效果，而不是陷入「什麼都能用，卻不知道什麼時候最好用」的困惑。`
+  },
+  // Slide 7
+  {
+    image: 'origin_image/slide_07.png',
+    text: `第一位登場的是 OpenAI 的 ChatGPT。
+
+作為目前知名度最高的通用語言模型，ChatGPT在自然語言推導、數理運算與程式碼檢閱方面都有優異的表現。在探究課程中，它特別適合扮演學生在研究初期的「科學腦力激盪夥伴」——幫助學生發想研究主題、設定自變因與控制變因、釐清實驗設計的邏輯。
+
+有趣的是，很多學生在跟ChatGPT對話幾輪之後，反而更清楚自己的研究方向應該往哪裡走，這種「釐清式對話」的效果，是傳統教學比較難快速達成的。`
+  },
+  // Slide 8
+  {
+    image: 'origin_image/slide_08.png',
+    text: `第二位是 Microsoft Copilot。
+
+Copilot最大的優勢，在於它與Windows 11、Edge瀏覽器以及Office 365教育帳號的深度整合。這對學校環境來說意義重大——學生可以在校園網路下安全使用，享有文獻版權與資訊隱私的保護。
+
+對於需要在安全框架內推動AI教學的學校來說，Copilot往往是最容易取得學校行政支持的選項。這不只是功能的問題，也是推動教學創新時必須考量的實務現實。`
+  },
+  // Slide 9
+  {
+    image: 'origin_image/slide_09.png',
+    text: `這頁展示的是Copilot在Edge PDF閱讀器中的實務應用場景。
+
+當學生閱讀艱澀的選修生物PDF講義時——比如圖中關於「最小可存活族群（MVP）」的定義——可以直接在右側開啟Copilot側欄提問。AI不只解釋MVP的定義，更能協助學生把文字與講義中的「滅絕漩渦（Extinction Vortex）」示意圖連起來理解：小族群因遺傳漂變與近親交配，如何一步步導致死亡率上升的惡性循環。
+
+這種「圖文對照式提問」的效果，是傳統的單純閱讀很難達到的。`
+  },
+  // Slide 10
+  {
+    image: 'origin_image/slide_10.png',
+    text: `第三位是 Anthropic 的 Claude。
+
+Claude在學術界與工程界以嚴謹的邏輯與強大的程式撰寫能力著稱。在探究實作課程中，它最自然的定位是「數據科學家與前端工程師」——即使是完全不懂程式的學生或老師，也能透過自然語言描述，請Claude分析數據，並在背景自動撰寫Python或JavaScript程式，繪製出高品質的圖表。
+
+值得注意的是，Claude在處理複雜的多步驟邏輯任務時特別穩定，這讓它成為探究課程中期數據整理階段的理想夥伴。`
+  },
+  // Slide 11
+  {
+    image: 'origin_image/slide_11.png',
+    text: `這頁展示的是我們利用Claude即時開發的「植物氣孔觀察實驗數據分析系統」網頁界面。
+
+學生可以在網頁中輸入組別名稱、植物名稱、葉片類型（雙子葉或單子葉）、棲地形態（陸生或水生），以及實際觀測到的上下表皮氣孔數量與大小。網頁會自動整合全班各組的數據，並提供一鍵匯出CSV的功能。
+
+這個系統的誕生，來自一個非常實際的課堂痛點：過去各組的數據散落在各自的紙張上，老師幾乎沒有辦法在一堂課內完成全班數據的彙整。有了這個自動化工具，數據收集的效率提升了相當明顯。`
+  },
+  // Slide 12
+  {
+    image: 'origin_image/slide_12.png',
+    text: `這張圖表是Claude根據全班的氣孔觀察數據自動生成的。
+
+圖中呈現了竹柏、蜘蛛茹、軟枝黃蟬、樟樹、鴨跖草、芒草、野薑花、睡蓮等植物的上下表皮氣孔數量對比。資料說得非常清楚：陸生雙子葉植物（如樟樹、軟枝黃蟬）的氣孔幾乎全部集中在下表皮，以減少水分散失；而浮葉植物（如睡蓮）的氣孔則集中在上表皮，方便進行氣體交換。
+
+這張圖的意義在於，它把學生自己測量的數據，化成了一個可以直接和「構造與功能」跨科概念對話的視覺證據。`
+  },
+  // Slide 13
+  {
+    image: 'origin_image/slide_13.png',
+    text: `這頁呈現的是不同植物氣孔大小——長度與直徑（單位：微米μm）——的比較長條圖，同樣由Claude自動統計並繪製。
+
+氣孔的大小直接關係到植物調節水分蒸散與氣體交換的精細程度。從圖中可以觀察到一個有趣的現象：有些植物的氣孔密度雖然高，但每個氣孔的孔徑卻偏小；這背後是植物在水分流失與二氧化碳攝入之間取得的演化平衡。
+
+學生在分析這張圖時，往往會開始提出自己的問題——這正是探究課程最期待看到的學習狀態。`
+  },
+  // Slide 14
+  {
+    image: 'origin_image/slide_14.png',
+    text: `這頁圖表進一步深入比較「雙子葉植物」與「單子葉植物」在氣孔特性上的差異。
+
+從植物學的角度來說，雙子葉植物的氣孔保衛細胞通常呈腎形，多分佈在葉片下表皮；單子葉植物（尤其是禾本科）的保衛細胞則呈啞鈴形，氣孔多分佈於葉片兩面。圖表透過量化的平均值與標準差，讓學生能夠用自己採集的數據，去印證植物學分類上的結構差異。
+
+這種「用數據說話」的過程，比教師直接告訴答案，更能讓學生對知識產生深刻的印象。`
+  },
+  // Slide 15
+  {
+    image: 'origin_image/slide_15.png',
+    text: `這頁呈現的是「氣孔數量與氣孔大小相關性分析」的散佈圖。
+
+學生常常會提出這樣的假設：「氣孔密度越高，氣孔是不是就會越小？」Claude讀取數據後繪製此散佈圖，引導學生尋找數據中的趨勢線，也學習如何合理解釋離群值（Outliers）的存在——那些偏離趨勢的數據點，往往才是最值得深入追問的地方。
+
+在多次實施過程中，我們發現這個「處理離群值」的訓練，是學生在論證建模能力上成長最快的環節之一。`
+  },
+  // Slide 16
+  {
+    image: 'origin_image/slide_16.png',
+    text: `這頁呈現的是「運動生理數據整理與分析」的心智大綱圖。
+
+本實驗探討不同運動項目——包括跑操場、原地跳150下、開合跳300下、折返跑40次——對生理代謝指標與心跳變化的影響。透過Mapify工具，AI將複雜的生理反應與各種運動項目，整理成結構清晰的心智圖，幫助學生在動手寫作之前，先把邏輯脈絡理清楚。
+
+有時候，寫作最大的障礙不是不知道說什麼，而是不知道先說哪一件事。心智圖在這裡扮演的，就是幫助學生找到起點的角色。`
+  },
+  // Slide 17
+  {
+    image: 'origin_image/slide_17.png',
+    text: `這頁呈現的是Claude所讀取的運動生理原始數據表格。
+
+表格中記錄了各組別（1A、2A、3A……）的運動選項、休息時心率、運動後心率，以及對應的生理代謝數值。原始數據本身是混亂的，光靠人眼幾乎無法直接解讀出任何有意義的模式。Claude讀入這份表格後，在背景自動撰寫程式碼，對數據進行清洗，並計算各組的平均增幅。
+
+這個過程讓學生清楚看到：從「一堆數字」到「可以討論的圖表」，中間有一個整理的工序——而AI可以幫你完成這個工序，讓你把精力放在更重要的解讀與詮釋上。`
+  },
+  // Slide 18
+  {
+    image: 'origin_image/slide_18.png',
+    text: `這頁是Claude自動生成的數據分析圖表。
+
+左側的文字解讀指出了幾個有意思的發現：2A組跑操場後心率增幅最大，從125增至160；而1A組的休息時指標偏高但運動後卻下降，這個異常值讓學生在課堂上展開了熱烈的討論。右側的長條圖則直觀地呈現了各組運動前後生理指標的對比。
+
+這種「AI先找出規律，學生再深入追問」的學習模式，讓學生能夠把注意力集中在探討乳酸堆積、有氧呼吸等科學機制上，而不是消耗在繁瑣的數據整理工作中。`
+  },
+  // Slide 19
+  {
+    image: 'origin_image/slide_19.png',
+    text: `第四位是 Google Gemini。
+
+Gemini最突出的優勢是強大的「多模態能力」——能同時處理文字、圖片、影片與音訊——以及與Google生態系的緊密整合，包括Classroom、Drive、Docs。在探究課程中，Gemini特別適合用於多媒體教材的生成、顯微鏡影像的視覺辨識，以及戶外生態觀察時的「隨拍隨問」。
+
+對於習慣使用Google工具的學校環境來說，Gemini能夠在既有的使用習慣中自然融入，這讓它在推廣上具備相當的實際優勢。`
+  },
+  // Slide 20
+  {
+    image: 'origin_image/slide_20.png',
+    text: `這頁展示的是利用Gemini的Imagen繪圖模型生成的「植物的水分平衡之旅：從細胞到個體」科普資訊圖。
+
+圖的左半以微觀的細胞尺度，呈現了低張、等張與高張溶液下的滲透作用與質壁分離；右半則以個體尺度，說明保衛細胞如何控制氣孔的開閉，以及光照、溫度、濕度、風速四個環境因子對蒸散作用的交互影響。
+
+這張高解析度的圖，成為學生在製作成果海報與簡報時非常實用的視覺素材，它把原本需要分多頁說明的概念，凝聚在一個畫面裡。`
+  },
+  // Slide 21
+  {
+    image: 'origin_image/slide_21.png',
+    text: `這頁介紹的是Google Gemini Veo 3在教學影片生成上的應用。
+
+Veo 3能夠根據文字描述，生成高畫質的科學慢動作影片。圖中展示的例子是大藍閃蝶翅膀表面鱗片的物理結構與偏光反射效果——這種微觀的光學現象，用一般相機幾乎無法捕捉。
+
+有了這樣的工具，教師在備課時，可以一鍵生成過去需要昂貴設備才能拍攝的科學影片，課堂趣味性的提升，對學生的學習動機來說是實質的助力。`
+  },
+  // Slide 22
+  {
+    image: 'origin_image/slide_22.png',
+    text: `這頁呈現的是利用Gemini Canvas功能生成的「植物氣孔形態與測量實驗」數據平台網頁。
+
+教師用自然語言告訴Gemini想要什麼，Gemini直接在Canvas畫布中寫出網頁代碼，生成美觀的繁體中文數據輸入界面——組別名稱、植物種類、棲地形態等欄位都整齊排列，讓學生在平板上幾秒內就能完成數據登錄。
+
+這個過程本身，也是一個很好的「AI如何接收需求、轉化為成品」的示範，學生在旁邊看著，往往對AI的工作方式產生更直觀的理解。`
+  },
+  // Slide 23
+  {
+    image: 'origin_image/slide_23.png',
+    text: `這頁呈現的是Gemini Canvas彙整後的「全班數據：各植物氣孔數量比較」長條圖。
+
+學生在實驗室中完成竹柏、軟枝黃蟬、樟樹、鴨跖草、芒草、睡蓮等植物的測量後，將數據登錄，網頁即時繪製出這張對比圖。圖下方還附上了觀察重點提示：「沉水植物的氣孔是否多分佈在上表皮？陸生植物是否多分佈在下表皮？」
+
+這種設計讓學生不只是被動地輸入數字，而是在看到圖表的那一刻，立即被引導去思考數據背後的生物學意義。`
+  },
+  // Slide 24
+  {
+    image: 'origin_image/slide_24.png',
+    text: `這頁是Gemini Canvas自動生成的「各植物氣孔大小比較」統計圖表。
+
+圖中以柱狀圖和氣泡提示框，呈現了各植物的測量結果——例如竹柏上表皮氣孔大小為0，下表皮為12微米。這種即時的視覺反饋，讓學生在實驗當下就能核對自己的測量結果是否合理，有效防範了實驗記錄上的低級錯誤。
+
+在多次課程實施中，我們發現這個「即時驗證」的功能，顯著降低了後期數據整理時發現異常值的頻率。`
+  },
+  // Slide 25
+  {
+    image: 'origin_image/slide_25.png',
+    text: `這頁呈現的是Gemini Canvas針對運動生理數據進行統計分析的界面。
+
+Canvas不只用柱狀圖呈現「休息時 vs. 運動後」的生理指標對比，左側還自動生成了文字版的「統計分析結論與觀察」，包括：異常數據的發現、整體上升趨勢的說明，以及增幅最顯著的項目。
+
+讓學生看到AI如何把數字寫成文字結論，本身就是一個很好的科學寫作示範。學生可以參考AI的邏輯架構，再加入自己的生物學詮釋，寫出更有深度的報告段落。`
+  },
+  // Slide 26
+  {
+    image: 'origin_image/slide_26.png',
+    text: `進入第三模組，我們要深入探討的是「AI視覺互動（Vision）與即時助教」。
+
+當前的AI不只能讀文字，更能透過相機鏡頭「看見」眼前的事物。這個能力，讓手機或平板在實驗室裡變成了一位24小時在線的助教——學生遇到不確定的標本、不懂的圖示，只要對著鏡頭拍一下、問一聲，就能立即得到有根據的回應。
+
+這對探究課程的意義在於：學生在實驗進行中的困惑，不用等到隔天問老師，可以當場解決，學習的連續性得以維持。`
+  },
+  // Slide 27
+  {
+    image: 'origin_image/slide_27.png',
+    text: `這頁展示的是ChatGPT的「即時視訊功能」。
+
+學生在進行科學觀察或野外踏查時，可以直接開啟手機相機對準眼前的樣本，AI能實時辨識出生物種類、分析其行為特徵，並以自然的語音進行問答。圖中的例子是學生對著寵物犬或植物標本提問，AI流暢地回應了觀察到的特徵。
+
+這種「隨看隨問」的能力，特別適合自主探究與生活科學觀察的情境——學生的好奇心往往在走廊、在操場、在放學路上被觸發，而不是在課堂上等老師給題目的時候。`
+  },
+  // Slide 28
+  {
+    image: 'origin_image/slide_28.png',
+    text: `這頁呈現的是ChatGPT視訊功能在實驗教學中的實際應用場景。
+
+圖中學生將手機相機對準電腦螢幕上的「心搏週期示意圖」進行直播提問，ChatGPT即時辨識出圖中的心臟瓣膜與血流箭頭，用語音詳細說明心室收縮期與舒張期時，二尖瓣、三尖瓣與半月瓣各自的開閉狀態。
+
+這種一對一的虛擬家教體驗，在課後自學的情境下尤其珍貴。對那些課堂上不好意思開口問問題的學生來說，這往往是他們第一次敢「把問題問完整」的機會。`
+  },
+  // Slide 29
+  {
+    image: 'origin_image/slide_29.png',
+    text: `這頁展示的是Microsoft Copilot的視覺辨識功能。
+
+在Windows 11系統下，學生閱讀細胞生物學電子講義時，可以直接截圖細胞構造圖（如圖中的動物與植物細胞結構圖），Copilot會在幾秒內標記出細胞核、粒線體、高基氏體與葉綠體的精確位置，並說明其生理功能。
+
+這個功能讓「圖文對照」的學習方式變得輕鬆許多，學生不再需要在教科書與參考資料之間來回翻找，AI直接在原圖上指出來、說清楚。`
+  },
+  // Slide 30
+  {
+    image: 'origin_image/slide_30.png',
+    text: `這頁呈現的是Edge PDF閱讀器結合語音與視覺辨識的實務畫面。
+
+當學生自學「物種多樣性」的估算方法與定義時，可以點擊Copilot進行語音提問。AI會用語音導讀教材，並針對表格中群集甲與群集乙的具體數據，即時解答學生的疑問。
+
+令人印象深刻的是，學生在這種語音互動模式下，提問的意願往往比書面打字高出許多。降低提問的門檻，是提升自學效率最直接的方法之一。`
+  },
+  // Slide 31
+  {
+    image: 'origin_image/slide_31.png',
+    text: `這頁展示的是Google Gemini Live Video的「隨拍隨問」功能。
+
+學生在戶外進行生態調查時，只需將手機鏡頭對準眼前的物件——衣物纖維、花朵、昆蟲——Gemini Live便能實時解析畫面，回答「這是什麼材質？」、「這朵花有什麼形態特徵？」等問題。
+
+這讓野外踏查課程的可能性大幅延伸。學生不再只是走馬看花地記錄「我看到了什麼」，而是能夠在現場就深入追問「這是為什麼」。`
+  },
+  // Slide 32
+  {
+    image: 'origin_image/slide_32.png',
+    text: `這頁呈現的是Google AI Studio的多模態影像辨識界面。
+
+AI Studio提供了接近開發者級別的自由度，教師與學生可以上傳顯微鏡錄影或切片照片，在「System Instructions」中設定AI扮演嚴謹的科學評審，對影片中的細胞分裂過程或生物行為進行特徵提取與量化分析。
+
+這個平台的開放性，讓教師能夠為不同的探究主題客製化AI的回應方式，而不是受限於固定的對話格式。`
+  },
+  // Slide 33
+  {
+    image: 'origin_image/slide_33.png',
+    text: `這頁展示的是利用Google AI Studio進行「影片教材分析與問答」的實際操作。
+
+教師上傳了一段17秒的心動週期動畫，請AI回答相關問題。AI能夠精確識別影片中的時間點，以繁體中文詳細說明心臟瓣膜在不同時刻的開閉動作與血流動力學原理。
+
+這個功能在教材開發上非常有價值——教師不用再自己逐格分析影片，可以把精力放在課程設計的更高層次上。`
+  },
+  // Slide 34
+  {
+    image: 'origin_image/slide_34.png',
+    text: `第四模組聚焦於「數位課堂教室與BYOD平板載具部署」。
+
+我們充分利用學生自帶的裝置，搭配學校現有的行動載具，打造出低成本、高效率的智慧實驗室。這個模式的核心邏輯是：不是每間學校都有充足的預算購置昂貴設備，但幾乎每個學生的口袋裡都有一台功能強大的智慧型手機。
+
+如何把學生原本只用來娛樂的裝置，轉化為科學探究的工具，正是BYOD模式最核心的教育挑戰。`
+  },
+  // Slide 35
+  {
+    image: 'origin_image/slide_35.png',
+    text: `這頁呈現的是Google Classroom線上預習與複習的界面。
+
+教師在課前發布「水蚤心搏實驗」的PDF實驗手冊與水蚤心跳慢動作影片，學生可以在家先完成預習，理解實驗原理。這個設計讓學生在進實驗室時，不需要先花時間聽老師講解基本原理，可以直接進入操作環節。
+
+在實施過程中，我們觀察到有了預習材料後，實驗課的成功率確實提升了——學生知道自己在找什麼，操作就不再是茫無目的的摸索。`
+  },
+  // Slide 36
+  {
+    image: 'origin_image/slide_36.png',
+    text: `這頁展示的是學生在Google Docs與Classroom上進行「實驗報告合作編輯與線上繳交」的實務。
+
+學生將顯微鏡下拍攝的動物組織觀察照片（結締組織-軟骨、結締組織-硬骨等）直接貼入線上報告，並共同編輯形態描述。教師則在線批閱，給予評分與具體的修改建議，整個流程全程無紙化。
+
+這種形成性評量的方式，讓師生的互動不再侷限在交件那一刻，而是延伸成一個持續的來回對話。`
+  },
+  // Slide 37
+  {
+    image: 'origin_image/slide_37.png',
+    text: `這頁介紹的是Padlet協作牆的QRCode快速分享功能。
+
+在實驗室中，教師只需將Padlet生成的QR碼投影在大螢幕上，各組學生用手機掃描，幾秒內就能進入全班共用的實驗影像分享平台，完全省去了輸入長網址的麻煩。
+
+這個細節看起來很小，但在實際課堂中意義重大——每次省下的30秒乘以一學期的課次，累積起來是相當可觀的有效教學時間。`
+  },
+  // Slide 38
+  {
+    image: 'origin_image/slide_38.png',
+    text: `這頁呈現的是Padlet內建AI圖像生成功能的課堂應用。
+
+在進行「蘚苔與真菌觀察」實驗時，難免有些小組因操作不順而找不到合適的觀察標本。這時教師可以引導學生利用Padlet的AI繪圖工具，輸入「蕨類植物」等關鍵字，快速生成精細的對照圖像，作為當下討論的臨時參考。
+
+這個即時應變的方式，把原本可能讓學生灰心的操作失敗，轉化成一個認識AI圖像生成的學習契機。`
+  },
+  // Slide 39
+  {
+    image: 'origin_image/slide_39.png',
+    text: `這頁展示的是Padlet手機拍照便利分享牆的全班成果。
+
+在「蘚苔與真菌觀察實驗」中，第一組到第六組的學生，將顯微鏡下拍攝的真實影像——洋菇蕈褶、酵母菌玻片、苔蘚假根——即時拍照上傳至看板。全班的影像在同一面牆上匯聚，打破了傳統小組之間的「資訊孤島」。
+
+這樣的設計讓學生在做自己的觀察的同時，也能看到別組的發現——有時候，別組看到的東西，正好能激發自己對數據的新想法。`
+  },
+  // Slide 40
+  {
+    image: 'origin_image/slide_40.png',
+    text: `這頁是麗山高中生物實驗室的硬體配置實照。
+
+每組實驗桌上均配發了光學顯微鏡、解剖顯微鏡、實驗托盤、培養皿、蓋玻片，以及最重要的平板載具。實驗室前方的大型投影螢幕，讓教師能即時展示優異組別的觀察成果，全班學生都能看到、討論。
+
+我們認為，物理空間的布置方式本身，就傳遞了一種關於「學習是集體事業」的訊息。`
+  },
+  // Slide 41
+  {
+    image: 'origin_image/slide_41.png',
+    text: `這頁展示的是分組實驗桌上的設備細節。
+
+兩台iPad平板擺在複式顯微鏡前：左側平板顯示「菌界/植物界」的電子圖譜教材，右側平板已開啟Padlet協作牆。學生能夠一邊觀察顯微鏡，一邊與標準圖譜對照，隨時準備拍照上傳。
+
+這種「雙螢幕」的配置設計，消除了學生在觀察與記錄之間來回切換的摩擦感，讓實驗的操作流程變得流暢許多。`
+  },
+  // Slide 42
+  {
+    image: 'origin_image/slide_42.png',
+    text: `這頁呈現的是平板載具的系統設定細節。
+
+為了解決課堂管理與帳號登入的繁複問題，實驗室中所有平板預先安裝並登入同一個Google共用帳號。這讓各組平板能直接存取相同的雲端硬碟與Classroom任務，省去了每次課堂開始前切換帳號的時間。
+
+這個設計決策背後，是一個長期實施後的實際體悟：再好的工具，如果上手門檻太高，往往最後都會被放棄使用。`
+  },
+  // Slide 43
+  {
+    image: 'origin_image/slide_43.png',
+    text: `這頁是「一台顯微鏡搭配一台平板」的標準小組配置實照。
+
+右側平板上清楚呈現了「洋蔥表皮細胞（未染色）」的實驗步驟，以及預期觀察到的質壁分離圖示。學生在動手切片之前，可以先在平板上用手指放大縮小圖像，理解細胞壁與原生質絲的相對位置，降低實驗操作失誤的機率。
+
+這種「先看再做」的流程，讓實驗不只是機械的操作，而是帶著理解去驗證。`
+  },
+  // Slide 44
+  {
+    image: 'origin_image/slide_44.png',
+    text: `這頁是教師講解與學生對照的實景。
+
+圖中顯微鏡旁的平板正顯示著高張糖水處理後，葉綠體細胞壁質壁分離（Plasmolysis）的真實影像，並有紅色文字標註「細胞質萎縮」與「質壁分離現象」。學生能夠同時用眼睛看顯微鏡目鏡，用平板確認標準影像，進行實時的比對。
+
+值得注意的是，這種「現場影像即時對照」的設計，大幅降低了學生因為「不確定自己看到的是不是對的」而感到挫折的情況。`
+  },
+  // Slide 45
+  {
+    image: 'origin_image/slide_45.png',
+    text: `這頁的照片記錄了學生在實驗室中主動探究的過程。
+
+兩位學生正在製作玻片標本，並利用平板上的圖像作為操作指引，用手指在畫面上指出保衛細胞的特徵，彼此討論。這個場景清楚地顯示，數位載具的融入能促進同儕之間的科學對話——學習的發生，從「老師說」轉變為「學生發現」。
+
+這正是探究課程最希望達成的課堂狀態。`
+  },
+  // Slide 46
+  {
+    image: 'origin_image/slide_46.png',
+    text: `這頁呈現的是跨班級的「大數據共享牆」成果。
+
+Padlet看板上彙整了204班、206班、207班、210班學生拍攝的動物組織學顯微照片，包括柱狀上皮、人血塗片、肺泡切片、骨骼肌等。這讓學生能夠擴大樣本量，比較不同班級、不同玻片的切片品質，培養跨組的統計與比較分析素養。
+
+在多次實施中，我們觀察到學生在看到其他班的作品時，往往會自發地討論「為什麼他們的標本拍起來比較清楚」，這種橫向的比較動力，是傳統各班各自作業的模式很難產生的。`
+  },
+  // Slide 47
+  {
+    image: 'origin_image/slide_47.png',
+    text: `這頁展示的是教師進行「即時評量與回饋」的實務操作。
+
+教師投影Padlet協作牆後，可以直接在學生的照片下方留下文字評語。例如針對第三組拍攝的洋菇照片，留言給出具體的回饋：「洋菇蕈褶結構清晰，胞孢定位正確」。學生當場就能獲得評語，感受到成就感，也明確知道哪裡還可以改進。
+
+即時回饋的教育價值，在於它縮短了「行動」與「修正」之間的時間差——而這個時間差越短，學習效率就越高。`
+  },
+  // Slide 48
+  {
+    image: 'origin_image/slide_48.png',
+    text: `這頁介紹的是「手機外接放大鏡頭」的低成本影像採集方案。
+
+學生在手機鏡頭上夾了一個迷你夾式放大鏡（放大倍率約15到30倍），直接對準解剖盤中的植物子房進行拍攝。這個方案的最大優勢是成本極低，卻能讓學生用手邊的手機，隨時隨地進行高品質的微觀影像記錄。
+
+讓每個學生都能「擁有」自己的觀察工具，是降低探究門檻最直接的方式之一。`
+  },
+  // Slide 49
+  {
+    image: 'origin_image/slide_49.png',
+    text: `這頁展示的是使用外接放大鏡頭拍攝的植物子房構造實照。
+
+圖中可以清晰觀察到子房壁、心皮、胚珠（胚囊）的排列與構造，成像解析度已能滿足高中生物課對花粉管萌發與子房發育觀察的基本需求。這些第一手的影像，成為學生撰寫探究報告時最有說服力的圖文素材。
+
+當學生看到自己親手拍下的照片出現在報告裡時，那份對成果的擁有感，是從網路下載圖片所無法替代的。`
+  },
+  // Slide 50
+  {
+    image: 'origin_image/slide_50.png',
+    text: `這頁記錄的是學生進行玻片定位的實際操作場景。
+
+三位學生正在使用光學顯微鏡，聚精會神地調整粗細調節輪與玻片夾，在玻片中尋找合適的細胞分裂切片。這張照片傳遞了一個重要的訊息：在AI教學環境下，基礎的顯微操作與科學實作技能，依然是探究的根基。
+
+AI增強的是學生分析與表達的能力，而不是替代他們親手操作的必要。`
+  },
+  // Slide 51
+  {
+    image: 'origin_image/slide_51.png',
+    text: `這頁展示的是「手機直接拍攝顯微鏡畫面」的技巧。
+
+學生用雙手穩固手機，將相機鏡頭貼近光學顯微鏡的目鏡。手機螢幕上清楚呈現了一隻活體水蚤的微觀影像，正進行縮時錄影。這個技巧讓每位學生都能保存自己的顯微視野，不必再「只有老師的手機裡有照片」。
+
+人人都能拍、人人都有紀錄，是實現真正個別化學習記錄的第一步。`
+  },
+  // Slide 52
+  {
+    image: 'origin_image/slide_52.png',
+    text: `這頁呈現的是「手機夾接目鏡」的升級方案。
+
+利用專屬的手機夾——圖中的綠色金屬環與黃色夾子——將手機牢牢固定在顯微鏡目鏡管上。這樣可以解決手震與失焦的困擾，讓畫面穩定清晰，特別適合需要長時間記錄的實驗，例如觀察水蚤連續心搏或色素層析展開的整個過程。
+
+穩定的影像記錄，是後期數據分析的品質保證。`
+  },
+  // Slide 53
+  {
+    image: 'origin_image/slide_53.png',
+    text: `進入第五模組，我們聚焦於「行動顯微觀察與縮時攝影紀錄」。
+
+這頁展示的是「雙螢幕協同」的教學應用。學生在用手機拍攝玻片的同時，旁邊的iPad正播放「馬蛔蟲受精卵有絲分裂」各時期的動畫簡報。學生能夠把目鏡中的真實細胞，與標準模式圖的前期、中期、後期、末期進行實時比對。
+
+這種「真實影像與模式圖並陳」的學習設計，讓學生不再只是背誦課本上的圖，而是真正學會「在顯微鏡下，染色體現在排在哪裡、代表哪個時期」。`
+  },
+  // Slide 54
+  {
+    image: 'origin_image/slide_54.png',
+    text: `這頁展示的是「手機縮時攝影在光合色素分離實驗」中的應用。
+
+學生將手機架在三腳支架上，開啟縮時功能，對準試管中的展開液。隨著展開液緩緩上升，葉綠素a、葉綠素b、葉黃素與胡蘿蔔素，因為在展開液中的溶解度各自不同，以不同的速度在濾紙上分離。縮時攝影將20分鐘的實驗過程濃縮成10秒的影片，讓色素移動的軌跡一目了然。
+
+有了這段影片，學生在撰寫報告的「結果」段落時，有了比靜態照片更有說服力的視覺證據。`
+  },
+  // Slide 55
+  {
+    image: 'origin_image/slide_55.png',
+    text: `這頁總結了「縮時攝影」在探究寫作中的學術價值。
+
+在科學寫作中，學生最難處理的往往是「隨時間發生的變化」——靜態照片只能呈現某一個瞬間，卻無法傳遞動態的歷程。透過縮時攝影，學生可以在報告中置入QRCode連結，讓讀者直接看到完整的過程，而文字描述也能更精確：「在展開第5分鐘時葉綠素a與b開始分離，至第15分鐘時展開距離達到最大值……」。
+
+這種精確描述時間序列的能力，正是科學論文寫作的核心素養之一。`
+  },
+  // Slide 56
+  {
+    image: 'origin_image/slide_56.png',
+    text: `這頁呈現的是「Google相簿在科學寫作中的素材管理」實務。
+
+教師引導學生在Google相簿建立「2-1 生物實驗 酵素活性與影響因子探究」共享相簿，各組將不同pH值、不同溫度下的試管顏色變化照片上傳至相簿。這樣一來，全班的對照組與實驗組素材集中在一個地方，寫報告時隨時可以下載參考，不怕數據散落或遺失。
+
+一個好的素材管理習慣，是科學寫作品質的重要基礎——這往往是學生最容易忽略、但老師最想強調的地方。`
+  },
+  // Slide 57
+  {
+    image: 'origin_image/slide_57.png',
+    text: `這頁強調的是「科學報告中的影像標籤規範」。
+
+實驗照片的呈現不能只是把試管隨意擺放就拍——照片中的試管必須整齊排列在架上，標籤要清晰可讀（pH3、pH5、pH7、pH10、pH13以及原液），液面高度與背景光線必須一致，才能作為有效的科學圖片。
+
+這個細節看似繁瑣，但它培養的是學生「讓別人能重現你的觀察」的科學素養——而這正是科學知識得以積累與傳承的根本機制。`
+  },
+  // Slide 58
+  {
+    image: 'origin_image/slide_58.png',
+    text: `這頁介紹的是利用「Google智慧鏡頭（Google Lens）」解讀顯微鏡或野外觀察影像的應用。
+
+當學生在顯微鏡下看到雙子葉植物莖的橫切面，卻無法辨認維管束的排列時，可以用手機拍攝並透過Google Lens搜尋。系統會自動比對資料庫，顯示相關的科學示意圖，幫助學生辨識木質部、韌皮部與形成層的相對位置。
+
+這個工具的意義在於，它讓學生能夠「帶著問題」去尋找答案，而不是等著老師來告訴他看到的是什麼。`
+  },
+  // Slide 59
+  {
+    image: 'origin_image/slide_59.png',
+    text: `進入第六模組，我們來到本課程最核心的實踐之一：「手機APP定量量化實驗數值」。
+
+在傳統的探究實驗中，我們常常只能以感覺來描述現象——「顏色好像變黃了」、「心跳感覺比較快了」。但這樣的描述，在科學論文中是沒有說服力的。本模組教導學生如何利用手機App，把這些模糊的感覺，轉化成精確、客觀、可重複驗證的數字。
+
+這個轉化，是從「生活觀察」邁向「科學探究」的決定性一步。`
+  },
+  // Slide 60
+  {
+    image: 'origin_image/slide_60.png',
+    text: `這頁展示的是ColorMeter（吸色計）App的定量原理。
+
+當學生將手機鏡頭對準酸鹼指示劑或葉綠素溶液時，App能在螢幕中央的瞄準圈內，精確讀取當前顏色的RGB數值與Hex十六進位色碼。例如圖中偵測紫色溶液，顯示R:135、G:62、B:132，色碼為#873E84。
+
+顏色，從此有了數字。這讓原本只能說「比較深」或「比較淺」的觀察，變成了可以精確記錄、可以跨組比較的科學數據。`
+  },
+  // Slide 61
+  {
+    image: 'origin_image/slide_61.png',
+    text: `這頁展示的是「顏色定量分析在照光實驗前後的比對」應用。
+
+在「光照與葉綠體」實驗中，A組（照光+葉綠體）與C組（黑暗+葉綠體）的顏色變化非常微妙，人眼幾乎無法判斷差異。透過ColorMeter截圖比對，學生可以清楚記錄A組的綠色通道數值在照光後從35變為83，溶液顯著變淺——這個數字，就是光反應確實發生的客觀證據。
+
+能用數據說話，是科學論文最基本的要求。`
+  },
+  // Slide 62
+  {
+    image: 'origin_image/slide_62.png',
+    text: `這頁介紹的是Titration ColorCam App在酸鹼中和滴定實驗中的應用。
+
+傳統滴定最大的難題之一，是如何判定「指示劑剛好變色」的終點——這個瞬間非常短暫，人眼很容易錯過或誤判。ColorCam利用相機持續偵測溶液顏色，當顏色由無色剛好轉化為微粉紅色時，App會發出震動與音效提醒。
+
+這個設計不只提升了實驗的精確度，對有色覺辨識困難的學生也非常友善——科學工具應該讓更多人都能參與，而不是築起更高的門檻。`
+  },
+  // Slide 63
+  {
+    image: 'origin_image/slide_63.png',
+    text: `這頁介紹的是「計數器App（Tally Counter）」在高頻事件記錄中的應用。
+
+當探究實驗需要計算顯微鏡下的心跳次數、細胞分裂數量等高頻率事件時，手動點擊計數器App可以取代傳統的紙上畫正字，大幅減少漏數與計數誤差。
+
+計數器本身是個極簡的工具，但在對的情境下，它解決的問題卻是非常真實的——多少次實驗因為計數不準，讓辛苦得來的數據失去了可信度？`
+  },
+  // Slide 64
+  {
+    image: 'origin_image/slide_64.png',
+    text: `這頁聚焦於「水蚤心搏實驗的傳統計數困境」。
+
+水蚤的心跳頻率極高，常溫下每分鐘可達200到300次。傳統方法是一人看顯微鏡、在紙上快速點點，一人拿秒錶計時，最後再去數紙上的點。這種方式下，原子筆斷墨、手酸、眼睛疲勞，每一個環節都可能造成數十次的計數誤差。
+
+最後的數據，往往是「差不多」的結果，而不是精確的科學量測。這是一個真實存在的問題，而不是誇大的困難。`
+  },
+  // Slide 65
+  {
+    image: 'origin_image/slide_65.png',
+    text: `這頁展示的是「利用計數器App改良水蚤心率量化」的實際操作場景。
+
+學生將水蚤的顯微影像透過手機投影在平板上，一邊看著螢幕數心跳，一邊用手指快速敲擊Tally Counter App。每一次敲擊，App自動累加並發出提示音，計數過程輕鬆、精確，數據即時儲存。
+
+這個改良雖然簡單，卻讓水蚤心搏實驗的數據品質有了明顯的提升——學生也因為操作不再那麼費力，能夠把更多注意力放在觀察心跳節律上。`
+  },
+  // Slide 66
+  {
+    image: 'origin_image/slide_66.png',
+    text: `這頁呈現的是「同儕協作：雙手機計數法」的現場照片。
+
+在水蚤心搏實驗中，最嚴謹的做法需要三台手機協同：右側手機以慢動作錄製水蚤心臟跳動，左側手機開啟計數器App，學生播放慢動作影片後逐格點擊計數（例如12秒內心跳25次，折算每分鐘心率），下方手機作為精確計時器。
+
+這種多機同步的合作模式，讓高頻率生物數據的採集變得可靠，也訓練了學生在分工協作中各司其職的科學實驗態度。`
+  },
+  // Slide 67
+  {
+    image: 'origin_image/slide_67.png',
+    text: `這頁介紹的是Phyphox App。
+
+Phyphox是由德國亞琛工業大學開發的免費科學量測App，能直接存取智慧手機內建的物理感測器，量測範圍涵蓋加速度、陀螺儀角速度、聲音強度（分貝）、聲音頻率、光感應強度，以及氣壓計等。
+
+手機本身就是一台小型科學儀器——Phyphox只是讓這件事變得顯而易見。對跨學科探究實驗來說，這個工具的出現，讓物理量測進入生物課堂變得既可行又自然。`
+  },
+  // Slide 68
+  {
+    image: 'origin_image/slide_68.png',
+    text: `這頁展示的是「Phyphox與生理感測整合」的跨領域生理探究設計。
+
+圖中呈現了一個有趣的實驗場景：學生坐在重低音喇叭旁，手戴智慧手環，手機綁在胸前。Phyphox記錄喇叭產生的微弱振動（加速度G力）與聲壓級（分貝），同時手環記錄人體的心率變異度（HRV），以實際數據探討低頻噪音對心血管系統的即時生理影響。
+
+這個設計把物理（聲學）、生物（心血管生理）與數據科學整合在一個探究主題裡，是跨領域課程設計的精彩示範。`
+  },
+  // Slide 69
+  {
+    image: 'origin_image/slide_69.png',
+    text: `這頁是本模組的精華：「自然學科探究實作推薦工具/App總表」。
+
+表格按學科（物理、化學、生物、地科）整理了推薦工具、主要功能與平台費用：Phyphox用於感測器定量，Titration ColorCam用於化學變色偵測，Seek用於生物物種鑑定，ImageJ用於細胞計數，Google Earth Engine用於地貌縮時分析。
+
+請各位教師與學生仔細閱讀這張表，這是備課與規劃探究主題時最直接的參考指引，也是我們多年來在課堂上實際測試後的精選清單。`
+  },
+  // Slide 70
+  {
+    image: 'origin_image/slide_70.png',
+    text: `這頁總結了「定量數據在科學寫作中的核心地位」。
+
+在探究論文中，結論必須基於客觀的數據。用App採集到的「R:135, G:62, B:132變為R:57, G:83, B:10」，或是「pH3時水蚤心率為250次/分，pH7時為310次/分」，這些精確的數字讓論文具備了無可替代的說服力——也是通過科學展覽與小論文評審的第一道門。
+
+從模糊感覺到精確數字，這個跨越，是學生在探究路上最重要的一步成長。`
+  },
+  // Slide 71
+  {
+    image: 'origin_image/slide_71.png',
+    text: `第七模組探討的是「數位白板與合作概念建模」。
+
+這頁展示的是傳統手繪概念圖的侷限。學生在磁鐵白板上用彩色筆繪製「光合作用光反應與碳反應關係圖」，然後拍照上傳。這種做法的問題在於：圖字一旦畫錯，就必須整片擦掉重來；草稿無法保留編輯歷程；小組成員也很難在同一時間共同修改。
+
+這些侷限讓模型的修改與精進變得非常耗時，而數位白板的出現，正好填補了這個缺口。`
+  },
+  // Slide 72
+  {
+    image: 'origin_image/slide_72.png',
+    text: `這頁介紹的是「數位繪圖白板的合作學習優勢」。
+
+利用iPad的Apple無邊記（Freeform）或Canva共享白板，學生可以在無限畫布上自由繪製、標記、拉箭頭，所有修改即時同步到每個組員的螢幕。小組成員可以用各自的平板同時在同一個畫面上工作，不需要輪流搶一支筆。
+
+這種即時同步的協作方式，讓跨領域的概念建模與腦力激盪，有了前所未有的流暢度。`
+  },
+  // Slide 73
+  {
+    image: 'origin_image/slide_73.png',
+    text: `這頁呈現的是數位白板在解剖構造教學中的實例。
+
+圖中展示了學生在無邊記App上，用平板繪圖筆依據貓咪與人體構造，手繪標註了唾腺、食道、肝臟、胃、胰臟、小腸、大腸、直腸等消化系統各器官的相對位置，並拉線補充各器官的生理功能說明。
+
+數位手繪圖清晰、可編輯、可分享，生成的圖片可直接上傳Padlet看板，成為全班共同的學習資源。`
+  },
+  // Slide 74
+  {
+    image: 'origin_image/slide_74.png',
+    text: `這頁是Canva共用白板在「酵素活性實驗數據彙整」的應用截圖。
+
+小組成員在Canva白板左側輸入不同pH值下過氧化氫酶分解過氧化氫產生氣泡高度的數據表格，右側貼入「製備酵素溶液」的操作流程示意圖。這種圖文並茂的數位白板，讓小組的實驗報告在排版呈現上，直接達到接近海報發表的水準。
+
+工具的美感與實用性，往往能提升學生對自己作品的重視程度——這是個值得觀察的教育現象。`
+  },
+  // Slide 75
+  {
+    image: 'origin_image/slide_75.png',
+    text: `第八模組進入「結構化AI搜尋與NotebookLM知識庫」。
+
+這頁展示的是Arc Search App的「Browse for me」功能。傳統搜尋引擎回傳的是一串連結，學生還需要自己一篇一篇點進去讀。Arc Search則直接閱讀前六到十個網頁，自動整理出關鍵資訊。例如搜尋「藍嬰症」，會直接呈現成因、治療方式與相關影片的懶人包摘要。
+
+這節省的不只是時間，更是學生在海量資訊中迷失的機率。`
+  },
+  // Slide 76
+  {
+    image: 'origin_image/slide_76.png',
+    text: `這頁呈現的是Felo Search在資料檢索與知識管理上的應用。
+
+Felo不只搜尋網路，還能將檢索到的複雜科學資訊，自動轉換成結構清晰的心智圖。例如針對特定的科學原理或法規規定，Felo直接產出多個分支的樹狀心智圖，讓學生對研究背景一目了然，也更容易理清邏輯關係。
+
+把搜尋結果視覺化，這個設計讓「獲取資訊」與「理解資訊」之間的距離大幅縮短。`
+  },
+  // Slide 77
+  {
+    image: 'origin_image/slide_77.png',
+    text: `這頁介紹的是Perplexity AI在學術文獻查證上的關鍵優勢。
+
+在科學寫作中，「嚴謹的引用來源」是學術倫理的基石。當學生用Perplexity搜尋「斑腿樹蛙入侵對台灣生態的影響」時，系統會給出有根據的分析，並在每個關鍵論點後標記引用連結——例如引自林務局的報告或特定研究論文。
+
+這引導學生養成尊重智慧財產、交叉查證的素養。我們希望學生不只知道「答案是什麼」，更清楚「這個答案從哪裡來、我可以去哪裡核實」。`
+  },
+  // Slide 78
+  {
+    image: 'origin_image/slide_78.png',
+    text: `這頁介紹的是Google NotebookLM在個人知識管理上的應用。
+
+NotebookLM是一個基於Gemini的「閉環個人知識庫」——教師或學生可以將本學期的選修生物講義、實驗手冊、特定文獻上傳，AI只根據這些已上傳的資料回答問題，不會從外部捏造資訊。
+
+這個設計，從根本上解決了通用LLM最讓學術現場擔憂的「幻覺」問題。你問的問題，它只回答它「真的讀過」的部分——這正是教育情境最需要的AI行為模式。`
+  },
+  // Slide 79
+  {
+    image: 'origin_image/slide_79.png',
+    text: `這頁展示的是NotebookLM的實務問答界面。
+
+當學生輸入「比較骨骼肌、心肌與平滑肌的異同」，AI僅根據上傳的選修生物講義，從細胞結構（骨骼肌長柱狀、多核、有橫紋；心肌有分支、單核、有橫紋；平滑肌紡錘狀、單核、無橫紋）與功能控制方式兩大向度進行結構化對比。學生還可以將對話儲存為筆記，或一鍵生成Podcast語音摘要。
+
+把被動的筆記，轉化為可以持續互動的知識庫——這是NotebookLM最值得深入利用的功能。`
+  },
+  // Slide 80
+  {
+    image: 'origin_image/slide_80.png',
+    text: `第九模組為教師介紹的是「AI輔助教案設計與素養導向命題」。
+
+AI不只是學生的學習夥伴，也是教師備課的智能助理。這頁展示了利用Claude生成的探究教案基本資料卡：「校園生物觀察——誰住在這裡？非生物因子如何影響生物分布」。AI協助教師規劃課程主題、科目、適用年段、授課節數、引導式探究層次，並對齊108課綱的跨科概念。
+
+把設計的時間，從「想架構」轉移到「想教學本質」——這是AI最能幫助教師的地方。`
+  },
+  // Slide 81
+  {
+    image: 'origin_image/slide_81.png',
+    text: `這頁展示的是利用ChatGPT Canvas畫布功能進行考題設計與修改的實務。
+
+教師將「細胞觀察實驗考題」貼入ChatGPT，啟動Canvas畫布。教師可以在右側直接下指令：「將每一題增加(E)選項以增加考試難度」、「優化誘答選項」，AI即時在畫布中編輯試題，產出高品質的素養導向單選題。
+
+考題設計往往是教師備課中最耗時的環節之一，AI的介入不是取代教師的專業判斷，而是大幅減少了「排版與生成選項」的機械勞動，讓教師能夠把精力放在「這題真的考到了什麼」上。`
+  },
+  // Slide 82
+  {
+    image: 'origin_image/slide_82.png',
+    text: `這頁呈現的是利用Gemini Canvas設計的「顯微鏡測量線上練習題」互動網頁。
+
+顯微鏡測量是高中生物實驗的一大難關，學生常搞不清楚目鏡微測器與載物台微測器格數的換算關係。Gemini Canvas協助教師開發了互動式校正模擬器與測量練習題，讓學生在線上輸入目鏡格數，即時換算出細胞的實際尺寸。
+
+這種形成性評量的設計，讓學生在還沒進實驗室之前，就能反覆練習直到熟悉——大幅降低了實際操作時的挫折感。`
+  },
+  // Slide 83
+  {
+    image: 'origin_image/slide_83.png',
+    text: `這頁展示的是利用Google AI Studio的影片分析模型進行命題的應用。
+
+教師上傳顯微鏡觀察錄影或細胞切片圖片，AI Studio讀取影像細節，並根據影片中的細胞分裂狀態或原生質流動，出題要求學生進行科學觀察與推理。
+
+這種「真實影像情境題」的設計，比傳統的文字描述題更能考驗學生是否真正理解生物現象——而不只是背誦了課本的文字。`
+  },
+  // Slide 84
+  {
+    image: 'origin_image/slide_84.png',
+    text: `這頁展示的是Edcafe AI平台在即時評量與語意反思上的應用。
+
+當學生在線上回答「溫度對過氧化氫酶活性的影響」簡答題時，AI即時批改並指出具體的不足之處：「你的回答指出了溫度對酵素活性的影響，但缺少對高溫變性後結構改變與反應速率關係的具體說明。」並提供建議答案引導自我修正。
+
+這種「即時、具體、有建設性」的回饋，是傳統大班教學中教師幾乎無法做到的事情——而AI讓它變成了可能。`
+  },
+  // Slide 85
+  {
+    image: 'origin_image/slide_85.png',
+    text: `在這份簡報的尾聲，我們展望AI與教育深度融合的未來。
+
+透過Gamma等簡報生成工具，師生能將探究大綱快速轉化為視覺精美的簡報；透過將NotebookLM筆記本或客製化AI助理（Gem）嵌入Google Classroom，學生在課後也能享有24小時的專屬學科助教。
+
+簡報最後呈現了麗山高中的Logo，以及AI生成的大山雀與生態詩畫。科學探究與AI技術的結合，不只是理性數據的提煉，也是一種跨領域美學的展現——這是我們希望帶給學生的，一種對自然科學既嚴謹又充滿好奇的看世界方式。
+
+感謝您的聆聽與觀看！`
+  }
+];
+
+// ═══════════════════════════════════════════════════
+//  State
+// ═══════════════════════════════════════════════════
+let currentIndex = 0;
+let autoplayTimer = null;
+let timerInterval = null;
+let timerCountdown = 0;
+let autoplayInterval = 10; // seconds
+let isFullscreen = false;
+
+// ═══════════════════════════════════════════════════
+//  Core functions
+// ═══════════════════════════════════════════════════
+function goToSlide(index, fromFullscreen = false) {
+  if (index < 0) index = slides.length - 1;
+  if (index >= slides.length) index = 0;
+  currentIndex = index;
+
+  const slide = slides[currentIndex];
+  const total = slides.length;
+  const num = currentIndex + 1;
+
+  // Main view
+  const img = document.getElementById('slide-img');
+  img.classList.add('fade');
+  setTimeout(() => {
+    img.src = slide.image;
+    img.classList.remove('fade');
+  }, 180);
+
+  document.getElementById('text-content').innerHTML = slide.text.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>');
+  document.getElementById('text-slide-num').textContent = `Slide ${num} 解說`;
+  document.getElementById('slide-counter').textContent = `${num} / ${total}`;
+
+  // Fullscreen view
+  const fsImg = document.getElementById('fs-img');
+  fsImg.classList.add('fade');
+  setTimeout(() => {
+    fsImg.src = slide.image;
+    fsImg.classList.remove('fade');
+  }, 180);
+  document.getElementById('fs-counter').textContent = `${num} / ${total}`;
+
+  // Progress bar
+  document.getElementById('progress-bar').style.width = `${(num / total) * 100}%`;
+
+  // Restart timer ring if autoplay is on
+  if (autoplayTimer) {
+    restartTimerRing();
+  }
+}
+
+function navigate(direction, fromFullscreen = false) {
+  goToSlide(currentIndex + direction, fromFullscreen);
+}
+
+function toggleAutoplay() {
+  if (autoplayTimer) {
+    stopAutoplay();
+  } else {
+    startAutoplay();
+  }
+}
+
+function startAutoplay() {
+  const btn = document.getElementById('btn-autoplay');
+  const fsBtn = document.getElementById('fs-btn-autoplay');
+  btn.textContent = '⏸ 暫停播放';
+  btn.classList.add('active');
+  fsBtn.textContent = '⏸ 暫停播放';
+  fsBtn.classList.add('active');
+
+  document.getElementById('timer-ring').classList.remove('hidden');
+  restartTimerRing();
+
+  autoplayTimer = setInterval(() => {
+    navigate(1);
+  }, autoplayInterval * 1000);
+}
+
+function stopAutoplay() {
+  if (autoplayTimer) {
+    clearInterval(autoplayTimer);
+    autoplayTimer = null;
+  }
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  const btn = document.getElementById('btn-autoplay');
+  const fsBtn = document.getElementById('fs-btn-autoplay');
+  btn.textContent = '▷ 自動播放';
+  btn.classList.remove('active');
+  fsBtn.textContent = '▷ 自動播放';
+  fsBtn.classList.remove('active');
+
+  document.getElementById('timer-ring').classList.add('hidden');
+  resetTimerRing();
+}
+
+function restartTimerRing() {
+  if (timerInterval) clearInterval(timerInterval);
+  resetTimerRing();
+  timerCountdown = autoplayInterval;
+  const circle = document.getElementById('timer-circle');
+  const circumference = 75.4;
+
+  timerInterval = setInterval(() => {
+    timerCountdown--;
+    const offset = circumference * (timerCountdown / autoplayInterval);
+    circle.style.strokeDashoffset = offset;
+    if (timerCountdown <= 0) clearInterval(timerInterval);
+  }, 1000);
+}
+
+function resetTimerRing() {
+  const circle = document.getElementById('timer-circle');
+  circle.style.strokeDashoffset = 75.4;
+}
+
+function setSpeed(val) {
+  autoplayInterval = parseInt(val);
+  // Sync both selects
+  document.getElementById('speed-select').value = val;
+  document.getElementById('speed-select2').value = val;
+
+  if (autoplayTimer) {
+    stopAutoplay();
+    startAutoplay();
+  }
+}
+
+function enterFullscreen() {
+  const overlay = document.getElementById('fullscreen-overlay');
+  overlay.classList.add('active');
+  isFullscreen = true;
+  document.getElementById('fs-img').src = slides[currentIndex].image;
+  document.getElementById('fs-counter').textContent = `${currentIndex + 1} / ${slides.length}`;
+
+  // Try browser native fullscreen
+  if (overlay.requestFullscreen) overlay.requestFullscreen().catch(() => {});
+}
+
+function exitFullscreen() {
+  const overlay = document.getElementById('fullscreen-overlay');
+  overlay.classList.remove('active');
+  isFullscreen = false;
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
+  if (e.key === 'Escape' && isFullscreen) exitFullscreen();
+  if (e.key === ' ') { e.preventDefault(); toggleAutoplay(); }
+  if (e.key === 'f' || e.key === 'F') { isFullscreen ? exitFullscreen() : enterFullscreen(); }
+});
+
+// Exit fullscreen when browser native fullscreen exits
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && isFullscreen) {
+    document.getElementById('fullscreen-overlay').classList.remove('active');
+    isFullscreen = false;
+  }
+});
+
+// ── Theme toggle ──
+let isLight = false;
+function toggleTheme() {
+  isLight = !isLight;
+  document.body.classList.toggle('light', isLight);
+  const btn = document.getElementById('btn-theme');
+  btn.textContent = isLight ? '🌑' : '🌙';
+  btn.title = isLight ? '切換為深色背景' : '切換為白色背景';
+}
+
+// Init
+goToSlide(0);
+</script>
+</body>
+</html>

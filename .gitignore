@@ -10,3 +10,12 @@
 # Allow presentation images
 !origin_image/*.png
 
+drive_links.json
+*.jpg
+解說簡報/batch_jobs.jsonl
+解說簡報/deck_spec.json
+解說簡報/outline.md
+解說簡報/prompts/
+解說簡報/slide_jobs.json
+解說簡報/slide_run_state.json
+解說簡報/speech.md

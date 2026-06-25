@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 輔助探究與實作課程實驗報告評閱指南</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #5a7a6a;
+    --sage-light: #e8f0ec;
+    --sage-mid: #a8c4b4;
+    --teal: #3d7a6e;
+    --teal-light: #e2f0ee;
+    --amber: #b8894a;
+    --amber-light: #faf3e8;
+    --rose: #9a6060;
+    --rose-light: #f5ecec;
+    --slate: #4a5568;
+    --slate-light: #f7f8fa;
+    --ink: #2d3748;
+    --ink-soft: #4a5568;
+    --muted: #718096;
+    --border: #e2e8f0;
+    --white: #ffffff;
+    --bg: #fbfcfd;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(155deg, #e8f2ef 0%, #f0f4f8 40%, #f8f5f0 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 40px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(90,122,106,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 30%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(61,122,110,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(90,122,106,0.12);
+    color: var(--teal);
+    border: 1px solid rgba(90,122,106,0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.06em;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.45;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 span { color: var(--sage); }
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    max-width: 640px;
+    line-height: 1.85;
+  }
+  .hero-meta {
+    margin-top: 28px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--muted);
+  }
+  .hero-meta-dot {
+    width: 6px; height: 6px;
+    background: var(--sage-mid);
+    border-radius: 50%;
+  }
+
+  /* ── NAV ── */
+  .toc-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+  .toc-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .toc-inner::-webkit-scrollbar { display: none; }
+  .toc-item {
+    padding: 14px 18px;
+    font-size: 13px; font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .toc-item:hover { color: var(--sage); border-color: var(--sage-mid); }
+  .toc-item.active { color: var(--sage); border-color: var(--sage); }
+
+  /* ── LAYOUT ── */
+  .main-content { max-width: 900px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 60px; }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 28px;
+  }
+  .section-number {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 12px; font-weight: 700;
+    color: var(--white);
+    background: var(--sage);
+    border-radius: 4px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .section-title span { color: var(--sage); }
+
+  /* ── INTRO TEXT ── */
+  .intro-text {
+    background: var(--sage-light);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.9;
+  }
+
+  /* ── MODEL COMPARISON TABLE ── */
+  .table-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+  }
+  .table-header {
+    background: linear-gradient(90deg, #e8f2ef, #f0f6f4);
+    padding: 14px 20px;
+    font-size: 13px; font-weight: 600;
+    color: var(--sage);
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .comparison-table th {
+    background: var(--slate-light);
+    color: var(--slate);
+    font-weight: 600; font-size: 12px;
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.04em;
+  }
+  .comparison-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+    vertical-align: top;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .comparison-table tr:hover td { background: rgba(90,122,106,0.03); }
+  .model-tag {
+    display: inline-block;
+    background: var(--sage-light);
+    color: var(--teal);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px; font-weight: 600;
+  }
+  .cer-badge {
+    display: inline-block;
+    background: var(--amber-light);
+    color: var(--amber);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px; font-weight: 600;
+    font-family: monospace;
+  }
+  .stars { color: var(--amber); font-size: 13px; letter-spacing: -1px; }
+  .use-tag {
+    background: var(--teal-light);
+    color: var(--teal);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px; font-weight: 500;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 14px;
+  }
+  .icon-sage { background: var(--sage-light); }
+  .icon-teal { background: var(--teal-light); }
+  .icon-amber { background: var(--amber-light); }
+  .icon-rose { background: var(--rose-light); }
+  .card-title { font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 8px; }
+  .card-body { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+
+  /* ── STEPS ── */
+  .steps-list { display: flex; flex-direction: column; gap: 0; }
+  .step-item {
+    display: flex; gap: 0;
+    position: relative;
+  }
+  .step-left {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0; width: 52px;
+  }
+  .step-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--sage);
+    color: white;
+    font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; z-index: 1;
+  }
+  .step-line {
+    width: 2px;
+    background: linear-gradient(to bottom, var(--sage-mid), var(--border));
+    flex: 1; min-height: 20px;
+  }
+  .step-item:last-child .step-line { display: none; }
+  .step-content {
+    padding: 4px 0 28px 16px;
+    flex: 1;
+  }
+  .step-label { font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 6px; }
+  .step-desc { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+
+  /* ── PROMPT BOX ── */
+  .prompt-section { margin-bottom: 32px; }
+  .prompt-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+    color: var(--sage);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .prompt-label-dot {
+    width: 8px; height: 8px;
+    background: var(--sage);
+    border-radius: 50%;
+  }
+  .prompt-box {
+    background: #f8faf9;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 22px;
+    font-family: 'Noto Sans TC', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.9;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px; font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  .copy-btn:hover { background: var(--sage-light); color: var(--sage); border-color: var(--sage-mid); }
+  .copy-btn.copied { color: var(--teal); border-color: var(--teal); }
+
+  .prompt-note {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .prompt-note::before { content: '💡'; flex-shrink: 0; }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight-box {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.85;
+  }
+  .highlight-sage {
+    background: var(--sage-light);
+    border: 1px solid rgba(90,122,106,0.2);
+    color: var(--teal);
+  }
+  .highlight-amber {
+    background: var(--amber-light);
+    border: 1px solid rgba(184,137,74,0.2);
+    color: #8a6530;
+  }
+  .highlight-rose {
+    background: var(--rose-light);
+    border: 1px solid rgba(154,96,96,0.2);
+    color: var(--rose);
+  }
+  .highlight-title { font-weight: 700; margin-bottom: 6px; font-size: 13px; letter-spacing: 0.04em; }
+
+  /* ── AGENT PLATFORM CARDS ── */
+  .platform-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media(max-width: 700px) { .platform-grid { grid-template-columns: 1fr; } }
+  .platform-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .platform-card-header {
+    padding: 14px 18px;
+    font-weight: 700; font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ph-claude { background: linear-gradient(90deg, #e8f2ef, #f0f8f5); color: var(--teal); }
+  .ph-gpt { background: linear-gradient(90deg, #eff4f8, #f5f8fa); color: #2c6e9e; }
+  .ph-gemini { background: linear-gradient(90deg, #f5f0f8, #faf5fb); color: #6a3fa0; }
+  .platform-card-body { padding: 14px 18px; }
+  .platform-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 7px 0;
+    border-bottom: 1px dashed rgba(226,232,240,0.7);
+    font-size: 13px;
+    gap: 10px;
+  }
+  .platform-row:last-child { border-bottom: none; }
+  .pr-key { color: var(--muted); flex-shrink: 0; }
+  .pr-val { font-weight: 500; color: var(--ink-soft); text-align: right; }
+
+  /* ── HITL FLOW ── */
+  .hitl-flow {
+    display: flex; align-items: stretch; gap: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+  }
+  .hitl-step {
+    flex: 1;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    border-right: 1px solid var(--border);
+  }
+  .hitl-step:last-child { border-right: none; }
+  .hitl-icon { font-size: 22px; margin-bottom: 8px; }
+  .hitl-num {
+    font-size: 10px; font-weight: 700;
+    color: var(--sage); letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .hitl-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .hitl-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .hitl-arrow {
+    position: absolute;
+    right: -9px; top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    background: var(--sage);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 9px;
+    z-index: 2;
+  }
+
+  /* ── WARNING / TIP ── */
+  .warning-box, .tip-box {
+    display: flex; gap: 12px; align-items: flex-start;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+  .warning-box { background: #fff8f0; border: 1px solid #f5d89a; color: #8a6530; }
+  .tip-box { background: var(--sage-light); border: 1px solid var(--sage-mid); color: var(--teal); }
+  .warn-icon, .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+  /* ── PARAMS TABLE ── */
+  .params-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .params-table th {
+    background: var(--sage-light);
+    color: var(--sage);
+    font-weight: 600; font-size: 12px;
+    text-align: left; padding: 10px 16px;
+    border-bottom: 1px solid var(--sage-mid);
+    letter-spacing: 0.04em;
+  }
+  .params-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+  }
+  .params-table tr:last-child td { border-bottom: none; }
+  .params-table tr:hover td { background: rgba(90,122,106,0.03); }
+  .param-key { font-family: monospace; color: var(--sage); font-weight: 600; font-size: 13px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 28px 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  .footer strong { color: var(--sage); }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .hero h1 { font-size: 1.6rem; }
+    .main-content { padding: 32px 20px 60px; }
+    .toc-nav { padding: 0 20px; }
+    .hitl-flow { flex-direction: column; }
+    .hitl-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .hitl-step:last-child { border-bottom: none; }
+    .hitl-arrow { display: none; }
+    .platform-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── ANCHOR SCROLL ── */
+  [id] { scroll-margin-top: 60px; }
+
+  /* ── TAG PILLS ── */
+  .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .tag {
+    background: var(--sage-light);
+    color: var(--sage);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px; font-weight: 500;
+  }
+
+  /* Section Divider */
+  .divider { height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 8px 0 32px; }
+
+  /* Rubric levels */
+  .rubric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+  @media(max-width: 600px) { .rubric-grid { grid-template-columns: 1fr 1fr; } }
+  .rubric-level {
+    border-radius: 10px;
+    padding: 14px 14px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .rl-1 { background: #fafaf0; border-color: #d4c87a; }
+  .rl-2 { background: var(--sage-light); border-color: var(--sage-mid); }
+  .rl-3 { background: var(--amber-light); border-color: #d4b07a; }
+  .rl-4 { background: var(--rose-light); border-color: #d4a4a4; }
+  .rl-name { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .rl-1 .rl-name { color: #8a8020; }
+  .rl-2 .rl-name { color: var(--teal); }
+  .rl-3 .rl-name { color: var(--amber); }
+  .rl-4 .rl-name { color: var(--rose); }
+  .rl-score { font-size: 22px; font-weight: 700; }
+  .rl-desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">📚 108 課綱 &nbsp;•&nbsp; 探究與實作 &nbsp;•&nbsp; AI 輔助評量</div>
+    <h1>AI 輔助高中<span>自然科學探究</span><br>實驗報告評閱完整指南</h1>
+    <p class="hero-sub">從 AI 模型選擇、評量規準數位化建構，到系統提示詞工程與人類參與迴圈設計，協助自然科教師高效、精準地批改探究與實作課程學習成果。</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="hero-meta-dot"></div>適用：高中自然科教師</div>
+      <div class="hero-meta-item"><div class="hero-meta-dot"></div>GPT-5 / Claude / Gemini 實務操作</div>
+      <div class="hero-meta-item"><div class="hero-meta-dot"></div>含完整提示詞範本</div>
+    </div>
+    <div class="tag-row">
+      <span class="tag">🔬 實驗報告評閱</span>
+      <span class="tag">✍️ 手寫辨識</span>
+      <span class="tag">📋 Rubrics 設計</span>
+      <span class="tag">🤖 AI Agent</span>
+      <span class="tag">🛡️ 幻覺防護</span>
+      <span class="tag">👨‍🏫 HITL 工作流</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="toc-nav">
+  <div class="toc-inner">
+    <a class="toc-item active" href="#s1">① 模型比較</a>
+    <a class="toc-item" href="#s2">② 評量規準</a>
+    <a class="toc-item" href="#s3">③ AI 代理設定</a>
+    <a class="toc-item" href="#s4">④ 提示詞工程</a>
+    <a class="toc-item" href="#s5">⑤ 防幻覺策略</a>
+    <a class="toc-item" href="#s6">⑥ HITL 工作流</a>
+    <a class="toc-item" href="#s7">⑦ 提示詞範本庫</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <!-- ① 模型比較 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title">AI 模型<span>效能比較</span>與選用策略</div>
+    </div>
+
+    <div class="intro-text">
+      高中學生的學習單與實驗紀錄充滿手寫算式、化學方程式、手繪圖表等多模態資訊。建構輔助批改系統前，需根據任務特性選擇最適合的 AI 模型，並進行<strong>異質性分流</strong>。
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">📊 主流 AI 模型教育評量能力比較</div>
+      <div style="overflow-x:auto">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>模型</th>
+              <th>手寫辨識（CER）</th>
+              <th>數學推理</th>
+              <th>長文邏輯</th>
+              <th>最佳教育場景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="model-tag">ChatGPT (GPT-5)</span></td>
+              <td><span class="cer-badge">~1.22% ★</span></td>
+              <td><span class="stars">★★★★★</span><br><small style="color:var(--muted)">98.2% MATH</small></td>
+              <td><span class="stars">★★★★</span></td>
+              <td><span class="use-tag">複雜數學運算、定量數據分析、程式碼檢閱</span></td>
+            </tr>
+            <tr>
+              <td><span class="model-tag">Claude Opus 4.7</span></td>
+              <td><span class="cer-badge">~1.31%</span></td>
+              <td><span class="stars">★★★★</span><br><small style="color:var(--muted)">91.5%</small></td>
+              <td><span class="stars">★★★★★</span><br><small style="color:var(--muted)">達 95% ★</small></td>
+              <td><span class="use-tag">長篇報告、論證邏輯、問答題語意剖析</span></td>
+            </tr>
+            <tr>
+              <td><span class="model-tag">Gemini 3.0</span></td>
+              <td><span class="cer-badge">~1.44%</span></td>
+              <td><span class="stars">★★★★</span></td>
+              <td><span class="stars">★★★★</span></td>
+              <td><span class="use-tag">手寫紀錄本、複雜表格、跨頁手寫文件</span></td>
+            </tr>
+            <tr>
+              <td><span class="model-tag">Azure Doc Intel v4.0</span></td>
+              <td><span class="cer-badge">~1.80%</span></td>
+              <td><span style="color:var(--muted);font-size:12px">N/A</span></td>
+              <td><span style="color:var(--muted);font-size:12px">N/A</span></td>
+              <td><span class="use-tag">標準化學習單框列與校務系統整合</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon icon-teal">🧮</div>
+        <div class="card-title">GPT-5 最佳場景</div>
+        <div class="card-body">物理化學實驗中涉及微積分推導、統計誤差分析、Python 數據視覺化報告的批閱引擎。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-sage">📝</div>
+        <div class="card-title">Claude 最佳場景</div>
+        <div class="card-body">長篇論證與假設探討的邏輯結構評分，特別適合「論證與建模」及「歸納與解釋」階段報告。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-amber">✍️</div>
+        <div class="card-title">Gemini 最佳場景</div>
+        <div class="card-body">處理凌亂手寫、多頁表格的原始實驗紀錄本，利用湧現推理能力推導難以辨識的字跡。</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <span class="tip-icon">💡</span>
+      <div><strong>分流建議：</strong>定量數據 → GPT-5；長篇論證邏輯評分 → Claude；凌亂手寫紀錄本 → Gemini；標準化學習單校務整合 → Azure Doc Intelligence</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ② 評量規準 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title">評量規準<span>（Rubrics）</span>數位化建構</div>
+    </div>
+
+    <div class="intro-text">
+      評量規準不僅是教師給分依據，更是學生自我檢核的鷹架。利用 AI 協助從零建構，可大幅縮短設計時間，並確保規準具備可被機器理解的結構化特性。
+    </div>
+
+    <div class="rubric-grid">
+      <div class="rubric-level rl-1">
+        <div class="rl-name">精熟 Mastery</div>
+        <div class="rl-score">90–100</div>
+        <div class="rl-desc">完全達到所有學習指標，論證嚴密，數據處理正確</div>
+      </div>
+      <div class="rubric-level rl-2">
+        <div class="rl-name">發展中 Developing</div>
+        <div class="rl-score">75–89</div>
+        <div class="rl-desc">多數指標達到，部分論證邏輯需補強</div>
+      </div>
+      <div class="rubric-level rl-3">
+        <div class="rl-name">起始 Beginning</div>
+        <div class="rl-score">60–74</div>
+        <div class="rl-desc">基本概念理解，但推理過程不完整</div>
+      </div>
+      <div class="rubric-level rl-4">
+        <div class="rl-name">未達標 Below</div>
+        <div class="rl-score">0–59</div>
+        <div class="rl-desc">未能呈現核心學習指標，需重大修正</div>
+      </div>
+    </div>
+
+    <div style="margin: 24px 0 16px;">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>利用 AI 生成評量規準的 XML 結構化指令範本</div>
+      <div class="prompt-box" id="rubric-prompt">身為一位精通科學教育評量的專家，請為高二化學「酸鹼滴定與實驗誤差分析」實驗報告設計評量規準。
+
+請使用 XML 結構來確保規準對齊學習目標：
+
+&lt;rubric_template&gt;
+  &lt;criteria&gt;
+    列出 3–5 項具體能力：
+    1. 研究假設之明確性與可操作性
+    2. 實驗數據精確度與記錄完整性
+    3. 誤差來源之識別與合理分析
+    4. 科學論證之邏輯一致性
+    5. 結論與假設的呼應程度
+  &lt;/criteria&gt;
+  &lt;performance_levels&gt;
+    定義 4 個層級：精熟／發展中／起始／未達標
+    每個層級附具體行為描述語
+  &lt;/performance_levels&gt;
+&lt;/rubric_template&gt;
+
+輸出格式：Markdown 表格，包含各層級的描述語與配分比例。
+      <button class="copy-btn" onclick="copyPrompt(this, 'rubric-prompt')">複製</button>
+      </div>
+      <div class="prompt-note">建議先請 AI 生成規準草稿，再由教師依課程目標調整細節，確保與學生學習歷程對齊。</div>
+    </div>
+
+    <div class="tip-box">
+      <span class="tip-icon">📌</span>
+      <div><strong>試批流程：</strong>在全班批改前，先挑選 3–5 份涵蓋高、中、低不同成就水準的報告讓 AI 試批，建立基準印象並微調提示詞中的模糊地帶，確保給分尺度一致。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ③ AI 代理設定 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title">AI 代理程式<span>（Agent）</span>設定操作指南</div>
+    </div>
+
+    <div class="intro-text">
+      要讓 AI 像自然科教師一樣批閱報告，必須建立具備<strong>專屬知識庫、長期記憶與多步推理能力</strong>的 AI 代理程式（AI Agent），而非單純的單次對話。
+    </div>
+
+    <div class="platform-grid">
+      <div class="platform-card">
+        <div class="platform-card-header ph-claude">🤖 Claude Projects</div>
+        <div class="platform-card-body">
+          <div class="platform-row"><span class="pr-key">上下文視窗</span><span class="pr-val">200K tokens（500頁書）</span></div>
+          <div class="platform-row"><span class="pr-key">知識庫</span><span class="pr-val">支援多格式上傳</span></div>
+          <div class="platform-row"><span class="pr-key">訂閱需求</span><span class="pr-val">Pro / Team</span></div>
+          <div class="platform-row"><span class="pr-key">Artifacts</span><span class="pr-val">可匯出 Word / 網頁</span></div>
+          <div class="platform-row"><span class="pr-key">最佳場景</span><span class="pr-val">長篇報告論述分析</span></div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-card-header ph-gpt">🧠 Custom GPTs</div>
+        <div class="platform-card-body">
+          <div class="platform-row"><span class="pr-key">知識庫上限</span><span class="pr-val">20 個檔案 / 512MB</span></div>
+          <div class="platform-row"><span class="pr-key">指示字數</span><span class="pr-val">8,000 字元</span></div>
+          <div class="platform-row"><span class="pr-key">圖片處理</span><span class="pr-val">⚠️ 知識庫會忽略圖片</span></div>
+          <div class="platform-row"><span class="pr-key">最佳格式</span><span class="pr-val">Markdown（非 PDF）</span></div>
+          <div class="platform-row"><span class="pr-key">分享</span><span class="pr-val">可分享連結給學生</span></div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-card-header ph-gemini">✨ Gemini Gems</div>
+        <div class="platform-card-body">
+          <div class="platform-row"><span class="pr-key">生態整合</span><span class="pr-val">Google Classroom / Drive</span></div>
+          <div class="platform-row"><span class="pr-key">手寫辨識</span><span class="pr-val">湧現推理，最強</span></div>
+          <div class="platform-row"><span class="pr-key">操作方式</span><span class="pr-val">手機拍照直接上傳</span></div>
+          <div class="platform-row"><span class="pr-key">最佳場景</span><span class="pr-val">原始實驗紀錄本</span></div>
+          <div class="platform-row"><span class="pr-key">塗改處理</span><span class="pr-val">準確率約 70–84%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <span class="warn-icon">⚠️</span>
+      <div><strong>Custom GPTs 注意事項：</strong>學生作業中的手繪圖表、實驗裝置照片，<strong>切勿預先打包上傳至知識庫</strong>。應在對話視窗中即時上傳，利用 GPT-4o 視覺辨識能力解析。</div>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>Claude Projects 知識庫建置清單</div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-title">📄 課程文件</div>
+          <div class="card-body">108 課綱探究與實作條目、課程大綱、教學目標說明文件</div>
+        </div>
+        <div class="card">
+          <div class="card-title">📊 評分依據</div>
+          <div class="card-body">詳細評量規準（Rubrics）、配分說明、各題型評分標準</div>
+        </div>
+        <div class="card">
+          <div class="card-title">📚 參考資料</div>
+          <div class="card-body">常見學生迷思概念清單、標準解答範例、過去優秀學生報告</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ④ 提示詞工程 -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title">系統提示詞工程<span>四階段架構</span></div>
+    </div>
+
+    <div class="intro-text">
+      代理程式的表現完全取決於系統提示詞的品質。專業的提示詞必須嚴格遵循<strong>角色 → 任務 → 約束條件 → 輸出格式</strong>四階段架構，確保評改結果與教育標準高度對齊。
+    </div>
+
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-left">
+          <div class="step-circle">R</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-label">角色定義（Role）</div>
+          <div class="step-desc">明確指定專業身分與語氣。「你是一位具備二十年資歷的台灣高中自然科資深教師，專精於 108 課綱探究與實作課程之嚴格評量」，會比「你是有用的助手」產出更具批判性思維的反饋。</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-left">
+          <div class="step-circle">T</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-label">任務拆解（Task）</div>
+          <div class="step-desc">以條列式或編號呈現，強制模型將複雜批改過程拆解為獨立行動：①辨識研究假設 → ②驗證數據邏輯一致性 → ③評估誤差分析合理性 → ④核對圖表格式。</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-left">
+          <div class="step-circle">C</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-label">約束條件（Constraints）</div>
+          <div class="step-desc">最關鍵卻最常被忽略。必須包含強制規則：「嚴格遵守上傳之評量規準給分，絕不自行發明標準」、「只能根據學生文本中實際出現的證據評論，嚴禁過度推論學生未寫出的意圖」。</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-left">
+          <div class="step-circle">O</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-label">輸出格式（Output Format）</div>
+          <div class="step-desc">嚴格定義輸出結構：以 Markdown 表格呈現各指標分數，表格後以條列式提供修改建議，並附上 0–1 的信心分數（Confidence score），便於教師篩選需人工介入的邊緣案例。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box highlight-sage" style="margin-top: 24px;">
+      <div class="highlight-title">🔄 後設提示詞（Meta-Prompting）五步驟推理</div>
+      強制 AI 在給出最終分數前，必須完成：<br>
+      <strong>① 分析</strong> 原始文本 → <strong>② 策略</strong> 如何應用規準 → <strong>③ 執行</strong> 試算分數 → <strong>④ 審查</strong> 自我一致性檢查 → <strong>⑤ 最終答案</strong> 含信心分數
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑤ 防幻覺策略 -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title">AI 幻覺<span>風險管控</span>與科學防護策略</div>
+    </div>
+
+    <div class="intro-text">
+      AI 在批改報告時可能針對正確的牛頓力學推導給出錯誤批評，或虛構不存在的科學原理。研究指出，即使聲稱「無幻覺」的法律專業 AI 系統，仍存在 <strong>17–33%</strong> 的幻覺率，教育工作者應採取多管齊下的緩解策略。
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon icon-sage">🎭</div>
+        <div class="card-title">角色邊界約束</div>
+        <div class="card-body">提示詞中明定 AI 只能依據給定教科書範圍與評分規準回覆，不得超出此範圍或憑空引用外部知識。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-amber">🛑</div>
+        <div class="card-title">強制不確定性表達</div>
+        <div class="card-body">明確指示：「若找不到足夠證據驗證學生數據，請回答『資訊不足無法判定』，絕對禁止推測或編造科學常數。」</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-teal">🌡️</div>
+        <div class="card-title">降低溫度值（Temperature）</div>
+        <div class="card-body">科學報告批改建議將 Temperature 設定為 0.3–0.5（甚至更低），促使模型產生更保守、基於事實的確定性回應。</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 8px;">
+      <div class="table-card">
+        <div class="table-header">⚙️ AI 模型參數調校建議</div>
+        <table class="params-table">
+          <thead>
+            <tr>
+              <th>參數</th>
+              <th>科學報告批改建議值</th>
+              <th>說明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="param-key">temperature</span></td>
+              <td>0.3 – 0.5</td>
+              <td>降低隨機性，減少「創意捏造」科學數據的機率</td>
+            </tr>
+            <tr>
+              <td><span class="param-key">top_p</span></td>
+              <td>0.8 – 0.9</td>
+              <td>限制取樣範圍，確保回應集中在高機率詞彙</td>
+            </tr>
+            <tr>
+              <td><span class="param-key">max_tokens</span></td>
+              <td>依報告篇幅調整</td>
+              <td>避免因截斷而導致回饋不完整</td>
+            </tr>
+            <tr>
+              <td><span class="param-key">confidence_threshold</span></td>
+              <td>＜ 0.7 → 人工審核</td>
+              <td>信心分數過低者自動標記，優先進行人工介入</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 16px;">
+      <span class="warn-icon">⚠️</span>
+      <div>高達 <strong>50–90% 的 LLM 生成回應</strong>未能被其引用的來源完全支持，甚至與來源互相矛盾。任何 AI 輔助批改系統都無法保證百分之百科學準確性，教師必須始終保持批判性審查。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑥ HITL 工作流 -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <div class="section-title">人類參與迴圈<span>（HITL）</span>教學工作流設計</div>
+    </div>
+
+    <div class="intro-text">
+      評量的核心在於診斷學習迷思並提供前進指引。AI 在教育場域的角色<strong>絕不能是全自動的最終裁決者</strong>，必須安放於以教師為主體的 HITL 工作流之中，確保教學主體性不受侵蝕。
+    </div>
+
+    <div class="hitl-flow">
+      <div class="hitl-step">
+        <div class="hitl-icon">📸</div>
+        <div class="hitl-num">STEP 1</div>
+        <div class="hitl-title">文件擷取</div>
+        <div class="hitl-desc">學生拍照或上傳數位版實驗報告至教學平台</div>
+        <div class="hitl-arrow">→</div>
+      </div>
+      <div class="hitl-step">
+        <div class="hitl-icon">🤖</div>
+        <div class="hitl-num">STEP 2</div>
+        <div class="hitl-title">自動化分析</div>
+        <div class="hitl-desc">AI 代理多模態解析、特徵擷取、套用規準試算給分</div>
+        <div class="hitl-arrow">→</div>
+      </div>
+      <div class="hitl-step">
+        <div class="hitl-icon">👨‍🏫</div>
+        <div class="hitl-num">STEP 3</div>
+        <div class="hitl-title">人類介入</div>
+        <div class="hitl-desc">教師審查標記案例（信心分數低、異常評分），做出最終裁決</div>
+        <div class="hitl-arrow">→</div>
+      </div>
+      <div class="hitl-step">
+        <div class="hitl-icon">🔄</div>
+        <div class="hitl-num">STEP 4</div>
+        <div class="hitl-title">回饋迴圈</div>
+        <div class="hitl-desc">教師修正決策重新輸入系統，持續優化模型批改基準</div>
+      </div>
+    </div>
+
+    <div class="highlight-box highlight-amber">
+      <div class="highlight-title">⚡ 教學主體性宣言</div>
+      教學判斷（Pedagogical judgement）是評量的絕對基礎，而非系統出錯時才啟用的備用安全閥。教師對學生學習歷程的深度理解、溫暖個性化的教育同理心，永遠是探究與實作評量中最不可動搖的基石。
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑦ 提示詞範本庫 -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <div class="section-title">完整<span>提示詞範本庫</span></div>
+    </div>
+
+    <div class="intro-text">
+      以下提供可直接複製使用的提示詞範本，涵蓋各種評閱場景。使用前請根據實際課程內容調整「實驗主題」、「配分標準」等括號內的參數。
+    </div>
+
+    <!-- Prompt 1 -->
+    <div class="prompt-section">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>範本一｜四階段完整批改系統提示詞（System Prompt）</div>
+      <div class="prompt-box" id="p1">【角色定義】
+你是一位具備二十年資歷的台灣高中自然科資深教師，專精於 108 課綱「探究與實作」課程之嚴格評量。你採用具權威性、指導性且客觀一致的學術語氣，以繁體中文（台灣慣用語）回應。
+
+【評分任務】
+請依照以下步驟批改學生提交的實驗報告：
+第一步：辨識學生提出的研究問題與操作型假設
+第二步：檢核自變因、依變因、控制變因的設計是否完整
+第三步：驗證實驗數據與研究假設的邏輯一致性
+第四步：評估誤差分析的合理性（含系統誤差與隨機誤差）
+第五步：核對科學論證品質（數據是否支持結論）
+第六步：自我一致性審查（是否違反約束條件）
+
+【強制約束條件】
+- 你必須嚴格遵守上傳之評量規準（Rubric）進行給分，絕不可自行發明給分標準
+- 你只能根據學生文本中實際出現的證據進行評論，嚴禁過度推論學生未寫出的意圖
+- 若找不到足夠的科學依據驗證學生數據，請明確回答「資訊不足無法判定」，絕對禁止推測或編造科學常數
+- 給分必須附上學生報告原文引用作為佐證
+
+【輸出格式】
+請以 Markdown 格式輸出，包含：
+1. 評分摘要表格（各指標分數 / 各指標滿分）
+2. 強項分析（條列式，引用報告原文）
+3. 改進建議（條列式，每項建議應具體可執行）
+4. 整體回饋（2–3 句，含學習建議）
+5. 信心分數：[0.0–1.0]（低於 0.7 者請標注「⚠️ 建議人工複審」）
+      <button class="copy-btn" onclick="copyPrompt(this, 'p1')">複製</button>
+      </div>
+      <div class="prompt-note">此為完整的 System Prompt，適合貼入 Claude Projects 的自訂指示或 Custom GPTs 的 Instructions 欄位。</div>
+    </div>
+
+    <!-- Prompt 2 -->
+    <div class="prompt-section">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>範本二｜內嵌評量規準的批改指令（附配分參數）</div>
+      <div class="prompt-box" id="p2">請使用以下規準分析這份高一物理實驗報告：
+
+【評分規準】
+1. 清晰的研究假設與變因控制說明（最高 4 分）
+2. 三個以上具有實驗數據支持的論證（最高 12 分）
+3. 對潛在誤差來源的認知與分析（最高 4 分）
+4. 數據圖表的格式正確性與標籤完整性（最高 3 分）
+5. 強化核心物理概念的結論（最高 3 分）
+   ─────────────────────
+   總分：26 分
+
+【特別注意】
+請針對每一項給出：
+- 具體得分（數字）
+- 引用學生報告中的「原話」支持你的給分理由
+- 一句具體的改進建議
+
+最後輸出信心分數（0.0–1.0），若低於 0.7 請說明不確定的原因。
+
+---
+[在此貼上學生報告全文]
+      <button class="copy-btn" onclick="copyPrompt(this, 'p2')">複製</button>
+      </div>
+      <div class="prompt-note">配分數字可依您的實際評量規準調整，建議維持具體數字而非僅使用百分比。</div>
+    </div>
+
+    <!-- Prompt 3 -->
+    <div class="prompt-section">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>範本三｜生成評量規準（Rubric 生成器）</div>
+      <div class="prompt-box" id="p3">你是一位精通 108 課綱科學教育評量設計的專家。
+
+請為以下實驗主題設計一份完整的探究與實作評量規準：
+
+【實驗主題】：[請填入，例如：氣孔密度與環境因子的相關性探究]
+【適用年級】：[請填入，例如：高二生物]
+【探究階段】：[請填入：發現問題 / 規劃研究 / 論證建模 / 表達分享]
+
+設計要求：
+1. 涵蓋 4–5 項評量指標（對應 108 課綱學習指標）
+2. 每項指標定義 4 個表現層級（精熟 / 發展中 / 起始 / 未達標）
+3. 每個層級撰寫具體的「學生行為描述語」（避免模糊用語）
+4. 建議各指標配分比例
+5. 以 Markdown 表格輸出，便於直接貼入教學文件
+
+另請補充：
+- 該主題常見的 3 個學生迷思概念
+- 給予 AI 批改時應特別注意的評分盲點
+      <button class="copy-btn" onclick="copyPrompt(this, 'p3')">複製</button>
+      </div>
+      <div class="prompt-note">將括號內的內容替換為實際課程資訊，AI 即可生成客製化的評量規準。建議搭配教師專業判斷進行最終調整。</div>
+    </div>
+
+    <!-- Prompt 4 -->
+    <div class="prompt-section">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>範本四｜全班錯誤趨勢分析提示詞</div>
+      <div class="prompt-box" id="p4">我是一位高中自然科教師。以下是同一份實驗報告作業中，來自不同學生的常見錯誤或回答片段。
+
+請幫我：
+1. 分類整理這些錯誤，找出全班最常見的「概念迷思」類型（前 3 名）
+2. 針對每種迷思，推測其可能的學習根源（為什麼學生會有這個誤解？）
+3. 設計 2–3 個針對性的課堂糾正策略
+4. 建議在下一次實驗設計時，如何修改題目以減少該類迷思的發生
+
+輸出格式：Markdown，含表格與條列式建議
+
+---
+【學生常見回答片段】
+（請在此貼入 5–10 份學生的相關段落）
+      <button class="copy-btn" onclick="copyPrompt(this, 'p4')">複製</button>
+      </div>
+      <div class="prompt-note">此提示詞特別適合學期末分析全班整體學習成效，或備課時評估教學策略的調整方向。</div>
+    </div>
+
+    <!-- Prompt 5 -->
+    <div class="prompt-section">
+      <div class="prompt-label"><div class="prompt-label-dot"></div>範本五｜個別化學習回饋生成器</div>
+      <div class="prompt-box" id="p5">你是一位溫暖、具有鼓勵性且嚴謹的台灣高中自然科教師。
+
+請根據以下學生的實驗報告批改結果，為這位學生撰寫一段個別化的學習回饋（約 150–200 字）：
+
+【學生概況】：[學習程度：進步中 / 穩定成長 / 遇到瓶頸]
+【強項表現】：[請填入 AI 批改摘要中的強項]
+【待改進項目】：[請填入主要弱點]
+【本次分數】：[X / 總分]
+
+回饋撰寫要求：
+- 開頭肯定學生的具體努力或進步（引用報告中的具體表現）
+- 中段清楚說明一個最重要的改進方向（具體可執行，非空泛建議）
+- 結尾給予下次實驗的學習期待，語氣積極鼓勵
+- 避免使用「你應該」「你必須」等命令式語氣
+- 以繁體中文撰寫，語氣親切但保持學術嚴謹性
+      <button class="copy-btn" onclick="copyPrompt(this, 'p5')">複製</button>
+      </div>
+      <div class="prompt-note">生成回饋後，建議教師依對學生的了解做最後的個人化調整，確保回饋符合該學生的具體學習狀況。</div>
+    </div>
+
+    <div class="highlight-box highlight-rose">
+      <div class="highlight-title">🔖 使用提示詞的核心原則</div>
+      無論使用哪個範本，請謹記：<strong>AI 負責規則套用與數據比對，教師負責最終判斷與溫暖回饋</strong>。信心分數低於 0.7 的批改結果必須人工複審；涉及學生科學概念理解的判定，教師的專業知識永遠優先於 AI 的推論。
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  本指南依據 <strong>108 課綱探究與實作</strong> 教育框架設計 &nbsp;•&nbsp; 適用於高中自然科教師 &nbsp;•&nbsp; AI 輔助評量工作流參考資源
+  <br><br>
+  <small style="color: #a0aec0;">提示詞範本可依課程需求自由調整 · 建議定期評估 AI 輸出品質並更新評量規準</small>
+</div>
+
+<script>
+  // Copy button
+  function copyPrompt(btn, id) {
+    const box = document.getElementById(id);
+    const text = box.innerText.replace('複製', '').replace('已複製 ✓', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '已複製 ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '複製';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // Active nav
+  const sections = document.querySelectorAll('.section');
+  const navItems = document.querySelectorAll('.toc-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  // Smooth scroll
+  navItems.forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(item.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

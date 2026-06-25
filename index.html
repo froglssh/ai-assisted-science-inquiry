@@ -8,13 +8,33 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root {
+  /* ── 預設為暗色主題 (Dark Theme) ── */
+  body.dark {
     --bg-dark: #070913;
-    --bg-grid: #0f132a;
     --card-bg: rgba(17, 24, 39, 0.6);
     --border: rgba(255, 255, 255, 0.08);
     --text-primary: #f3f4f6;
     --text-secondary: #9ca3af;
+    --text-inverse: #070913;
+    --bg-grid: rgba(255, 255, 255, 0.003);
+    --btn-secondary: rgba(255, 255, 255, 0.05);
+    --btn-secondary-hover: rgba(255, 255, 255, 0.15);
+  }
+
+  /* ── 明亮主題 (Light Theme) ── */
+  body.light {
+    --bg-dark: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --border: rgba(15, 23, 42, 0.08);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-inverse: #ffffff;
+    --bg-grid: rgba(15, 23, 42, 0.005);
+    --btn-secondary: rgba(15, 23, 42, 0.04);
+    --btn-secondary-hover: rgba(15, 23, 42, 0.08);
+  }
+
+  :root {
     --primary: #10b981; /* 森林綠 */
     --primary-glow: rgba(16, 185, 129, 0.25);
     --gold: #fbbf24;
@@ -31,15 +51,16 @@
     font-family: 'Outfit', 'Noto Sans TC', sans-serif;
     background-color: var(--bg-dark);
     background-image: 
-      radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-      linear-gradient(rgba(255, 255, 255, 0.003) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.003) 1px, transparent 1px);
+      radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.07) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.07) 0%, transparent 40%),
+      linear-gradient(var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
     color: var(--text-primary);
     line-height: 1.6;
     padding-bottom: 80px;
     overflow-x: hidden;
+    transition: background-color var(--transition), color var(--transition);
   }
 
   /* ── CONTAINER ── */
@@ -47,12 +68,41 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
+    position: relative;
   }
+
+  /* ── THEME TOGGLE BUTTON ── */
+  .theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: var(--transition);
+    z-index: 1000;
+  }
+  .theme-toggle:hover {
+    transform: rotate(15deg) scale(1.05);
+    border-color: var(--primary);
+  }
+  .theme-toggle .sun-icon { display: none; }
+  .theme-toggle .moon-icon { display: block; }
+  body.light .theme-toggle .sun-icon { display: block; color: var(--gold); }
+  body.light .theme-toggle .moon-icon { display: none; }
 
   /* ── HERO SECTION ── */
   .hero {
     position: relative;
-    padding: 80px 0 60px;
+    padding: 90px 0 60px;
     text-align: center;
     border-bottom: 1px solid var(--border);
     margin-bottom: 40px;
@@ -72,7 +122,7 @@
     width: 72px;
     height: 72px;
     filter: drop-shadow(0 0 15px var(--primary-glow));
-    animation: rotateLogo 20s linear infinite;
+    animation: rotateLogo 25s linear infinite;
   }
   @keyframes rotateLogo {
     0% { transform: rotate(0deg); }
@@ -92,7 +142,7 @@
     font-size: clamp(36px, 5vw, 56px);
     font-weight: 900;
     letter-spacing: -1px;
-    background: linear-gradient(135deg, #ffffff 30%, #a7f3d0 100%);
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--primary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -105,7 +155,7 @@
     margin-bottom: 24px;
   }
 
-  /* 快速外連發光按鈕 */
+  /* 快速外連按鈕 */
   .hero-actions {
     display: flex;
     justify-content: center;
@@ -180,7 +230,7 @@
   .engine-card:hover {
     transform: translateY(-5px);
     border-color: rgba(255, 255, 255, 0.18);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
   }
   
   .engine-card h2 {
@@ -188,7 +238,7 @@
     font-size: 1.6rem;
     font-weight: 700;
     margin-bottom: 12px;
-    color: #fff;
+    color: var(--text-primary);
   }
   .engine-card p {
     font-size: 14px;
@@ -216,7 +266,7 @@
   
   .engine-slide-btn {
     background: var(--gold);
-    color: #000;
+    color: var(--text-inverse);
   }
   .engine-slide-btn:hover { background: #fbbf24; filter: brightness(1.1); }
 
@@ -229,6 +279,7 @@
     text-align: center;
     position: relative;
     padding-bottom: 10px;
+    color: var(--text-primary);
   }
   .section-title::after {
     content: '';
@@ -238,7 +289,7 @@
 
   .inquiry-map {
     margin-bottom: 60px;
-    background: rgba(16, 185, 129, 0.03);
+    background: rgba(16, 185, 129, 0.04);
     border: 1px dashed rgba(16, 185, 129, 0.2);
     border-radius: 12px;
     padding: 40px 30px;
@@ -252,7 +303,7 @@
   }
   
   .map-node {
-    background: rgba(17, 24, 39, 0.7);
+    background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 24px;
@@ -273,7 +324,7 @@
   }
   .map-node .badge {
     position: absolute; top: -12px; right: 16px;
-    background: var(--border-color);
+    background: var(--btn-secondary);
     padding: 2px 10px;
     border-radius: 12px;
     font-size: 11px;
@@ -292,7 +343,7 @@
   }
   
   .tab-btn {
-    background: rgba(255,255,255,0.03);
+    background: var(--btn-secondary);
     border: 1px solid var(--border);
     color: var(--text-secondary);
     padding: 10px 20px;
@@ -303,8 +354,8 @@
     transition: var(--transition);
   }
   .tab-btn:hover {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
+    background: var(--btn-secondary-hover);
+    color: var(--text-primary);
   }
   .tab-btn.active {
     background: var(--primary);
@@ -344,7 +395,7 @@
   }
   .resource-card:hover {
     border-color: rgba(255,255,255,0.15);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
   }
 
   .card-top {
@@ -362,10 +413,10 @@
   }
   
   .file-icon {
-    font-size: 20px;
+    font-size: 18px;
     padding: 6px;
     border-radius: 6px;
-    background: rgba(255,255,255,0.05);
+    background: var(--btn-secondary);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -380,12 +431,13 @@
   .resource-card h3 {
     font-size: 1.15rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--text-primary);
   }
   
   .card-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
   }
   
   .action-link {
@@ -408,23 +460,32 @@
     background: var(--primary);
     color: #fff;
   }
-  .link-download {
-    background: rgba(255,255,255,0.05);
+  .link-cloud-view {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--blue);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+  .link-cloud-view:hover {
+    background: var(--blue);
     color: #fff;
+  }
+  .link-download {
+    background: var(--btn-secondary);
+    color: var(--text-primary);
     border: 1px solid var(--border);
   }
   .link-download:hover {
-    background: rgba(255,255,255,0.15);
+    background: var(--btn-secondary-hover);
   }
 
   /* 💡 教學與解說泡泡 */
   .pedagogical-tips {
-    background: rgba(16, 185, 129, 0.05);
+    background: rgba(16, 185, 129, 0.03);
     border-left: 3px solid var(--primary);
     padding: 12px 16px;
     border-radius: 0 6px 6px 0;
     font-size: 13px;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     line-height: 1.7;
   }
   .pedagogical-tips strong {
@@ -447,10 +508,16 @@
   footer a:hover { text-decoration: underline; }
 </style>
 </head>
-<body>
+<body class="dark">
 
 <div class="container">
   
+  <!-- THEME TOGGLE -->
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="切換亮暗色模式">
+    <span class="sun-icon">☀️</span>
+    <span class="moon-icon">🌙</span>
+  </button>
+
   <!-- HERO SECTION -->
   <header class="hero">
     <div class="hero-header">
@@ -531,57 +598,121 @@
     <!-- 類群 1：核心大綱與教案 -->
     <div id="tab-curriculum" class="tab-content active">
       <div class="resources-grid">
+        <!-- AI輔助教學_實驗探究.html -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-html">HTML</span>
               <div>
                 <h3>AI 輔助自然科學探究實作 課程教案</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">主要在線教學檔案 ｜ 根目錄</p>
+                <p style="font-size:12px; color:var(--text-secondary);">在線教案網頁</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="AI輔助教學_實驗探究.html" class="action-link link-view">👁️ 在線查看</a>
+              <a href="AI輔助教學_實驗探究.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1zm4uBQ9-2bw7mjpbW8-zLjMZRJUxrksQ&export=download" class="action-link link-download">💾 直連下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 本教案包含八大教學主題，點擊按鈕可直接跳轉在線查看。在課堂上，教師可引導學生複製其中的「假說建立提示詞」至 AI 中，藉以訓練學生釐清實驗主線。
+            <strong>💡 教學實操指引：</strong> 本教案包含八大教學主題。在課堂上，教師可引導學生複製其中的「假說建立提示詞」至 AI 中，藉以訓練學生釐清實驗主線。
           </div>
         </div>
 
+        <!-- AI輔助教學_實驗探究_解說簡報.html -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-html">HTML</span>
               <div>
                 <h3>AI 輔助教學 85 頁完整簡報播放網頁</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">全套簡報與語音解說 ｜ 根目錄</p>
+                <p style="font-size:12px; color:var(--text-secondary);">全套簡報與語音解說網頁</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="AI輔助教學_實驗探究_解說簡報.html" class="action-link link-view">👁️ 在線觀看</a>
+              <a href="AI輔助教學_實驗探究_解說簡報.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1gFV2Muf74b3ifeD5i8fMvecGWQMubW-T&export=download" class="action-link link-download">💾 直連下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 內嵌 85 頁全圖解投影片以及語音備忘錄，適合做為學生課前自學簡報，或由教師於大螢幕播放，按部就班引導各階段 AI 實作示範。
+            <strong>💡 教學實操指引：</strong> 內嵌 85 頁全圖解投影片以及語音備忘錄，適合做為學生課前自學簡報，或由教師於大螢幕播放，引導各階段 AI 實作示範。
           </div>
         </div>
 
+        <!-- AI輔助教學＿實驗探究篇.pptx -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-word">PPTX</span>
               <div>
-                <h3>AI 輔助教學 探究實作篇 研習大綱簡報</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">研習簡報資料夾</p>
+                <h3>AI 輔助教學 實驗探究篇 原始 PowerPoint 簡報檔</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">簡報來源原始檔 (120MB)</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載</a>
+              <a href="https://docs.google.com/uc?id=1FSIuB0LCEL4kKAV6NM_nR3HeSCdJFJfm&export=download" class="action-link link-download">💾 直接下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 提供 `.pptx` 與 `.pdf` 大綱投影片，說明科學探究實作跨領域研習的整體架構。適合教育工作者下載用於社群備課及研習推廣。
+            <strong>💡 教學實操指引：</strong> 這是最原始的 85 頁完整簡報 PowerPoint 檔，包含每一頁的演講備忘錄，提供給教師自行編輯修改、進行二次授課使用。
+          </div>
+        </div>
+
+        <!-- AI輔助教學＿實驗探究篇.pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>AI 輔助教學 實驗探究篇 簡報 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">簡報 PDF 版本</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/1AXiyqqjB3BqUMz6JCcP0LDng6I9VWyXM/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1AXiyqqjB3BqUMz6JCcP0LDng6I9VWyXM&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 簡報的 PDF 版本，方便直接在大螢幕、平板或手機上以最穩定版式開啟閱讀，不易有跑版情形。
+          </div>
+        </div>
+
+        <!-- 研習簡報/AI輔助教學＿探究實作篇＿大綱.pptx -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-word">PPTX</span>
+              <div>
+                <h3>AI 輔助教學 探究實作篇 研習大綱簡報 (.pptx)</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">研習大綱簡報檔</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://docs.google.com/uc?id=1fGILVho3KB5EBPlR9h0Wn00I7988WCcy&export=download" class="action-link link-download">💾 直接下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 提供跨領域研習大綱的原始簡報，便於社群推廣與備課指引。
+          </div>
+        </div>
+
+        <!-- 研習簡報/AI輔助教學＿探究實作篇＿大綱.pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>AI 輔助教學 探究實作篇 研習大綱 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">大綱 PDF 版本</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/1eMmwt0tFufuq0Cl10Sz7bcoOor6K10DM/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1eMmwt0tFufuq0Cl10Sz7bcoOor6K10DM&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 研習大綱的 PDF 版本，點擊即可直接在雲端檢視，不需下載。
           </div>
         </div>
       </div>
@@ -590,18 +721,19 @@
     <!-- 類群 2：報告自動批改 -->
     <div id="tab-grading" class="tab-content">
       <div class="resources-grid">
+        <!-- 報告批改/AI輔助實驗報告批改教學網頁.html -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-html">HTML</span>
               <div>
                 <h3>AI 輔助實驗報告批改教學與指引網頁</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">報告批改資料夾</p>
+                <p style="font-size:12px; color:var(--text-secondary);">報告批改教學網頁</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="報告批改/AI輔助實驗報告批改教學網頁.html" class="action-link link-view">👁️ 在線查看</a>
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 下載</a>
+              <a href="報告批改/AI輔助實驗報告批改教學網頁.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1jN0atEnenI7fqSCQhHcbhIDw-dgrQIwF&export=download" class="action-link link-download">💾 下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
@@ -609,39 +741,82 @@
           </div>
         </div>
 
+        <!-- 報告批改/AI 輔助高中實驗報告批改研究.html -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
-              <span class="file-icon icon-pdf">PDF</span>
+              <span class="file-icon icon-html">HTML</span>
               <div>
-                <h3>AI 輔助高中實驗報告批改研究論文</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">報告批改資料夾 ｜ 支援 Word/PDF 格式</p>
+                <h3>AI 輔助高中實驗報告批改研究 論文網頁</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">研究成果 HTML 版本</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載</a>
+              <a href="報告批改/AI 輔助高中實驗報告批改研究.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=17F54xUtPoUy91fxDor_5pzAzUaTqJCjd&export=download" class="action-link link-download">💾 下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 本研究論文詳細描述了麗山高中實施 AI 批改實驗報告的科研數據與回饋成效。可作為自然科教師撰寫探究教學論文或小論文指導的理論基礎與參考文獻。
+            <strong>💡 教學實操指引：</strong> 麗山高中針對 AI 自動批改報告的研究成果網頁。直接提供線上觀看，方便教師閱讀研究分析。
           </div>
         </div>
 
+        <!-- 報告批改/AI 輔助高中實驗報告批改研究.pdf -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-pdf">PDF</span>
               <div>
-                <h3>AI 輔助高中實驗報告批改研究_LM簡報</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">報告批改資料夾</p>
+                <h3>AI 輔助高中實驗報告批改研究論文 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">研究成果 PDF 格式</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載</a>
+              <a href="https://drive.google.com/file/d/1TWffrL-wCZs-aZ18PlvV0sUShfWVB8LF/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1TWffrL-wCZs-aZ18PlvV0sUShfWVB8LF&export=download" class="action-link link-download">💾 下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 本投影片簡報說明如何結合 NotebookLM 將大量的批改標準與學術評語打包為知識庫，大幅提升教師日常評改報告的效率達 60% 以上。
+            <strong>💡 教學實操指引：</strong> 本研究論文詳細描述了麗山高中實施 AI 批改實驗報告的數據與回饋成效。點擊雲端檢視可直接閱讀，免去下載繁瑣。
+          </div>
+        </div>
+
+        <!-- 報告批改/AI 輔助高中實驗報告批改研究.docx -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-word">WORD</span>
+              <div>
+                <h3>AI 輔助高中實驗報告批改研究論文 Word</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">研究成果 Word 格式</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://docs.google.com/uc?id=1XKd8YpEdMC1-enPTlaMN7waaevPjUnc7&export=download" class="action-link link-download">💾 直接下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 提供論文的 `.docx` 格式直接下載，便於需要引用或修改文章結構的教師使用。
+          </div>
+        </div>
+
+        <!-- 報告批改/AI 輔助高中實驗報告批改研究_LM簡報.pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>AI 輔助高中實驗報告批改研究 LM 簡報</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">報告批改 LM 簡報</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/1lo6hdgVI1CCZQWq7ZuwV09Mosok_V1rL/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1lo6hdgVI1CCZQWq7ZuwV09Mosok_V1rL&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 本投影片簡報說明如何結合 NotebookLM 將大量的批改標準與學術評語打包為知識庫，提升評改報告效率。
           </div>
         </div>
       </div>
@@ -650,77 +825,182 @@
     <!-- 類群 3：實作案例範本 -->
     <div id="tab-cases" class="tab-content">
       <div class="resources-grid">
+        <!-- 實作案例/講義例子/光照影響葉綠素穩定性實驗 — 學生講義.html -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-html">HTML</span>
               <div>
-                <h3>光照影響葉綠素穩定性實驗 — 學生講義範本</h3>
+                <h3>光照影響葉綠素穩定性實驗 — 學生講義網頁</h3>
                 <p style="font-size:12px; color:var(--text-secondary);">實作案例/講義例子</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="實作案例/講義例子/光照影響葉綠素穩定性實驗 — 學生講義.html" class="action-link link-view">👁️ 在線查看</a>
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 下載</a>
+              <a href="實作案例/講義例子/光照影響葉綠素穩定性實驗 — 學生講義.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1qNtnACO9_Rv7hCtd-PHo_YcPS2REzZOh&export=download" class="action-link link-download">💾 下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 打破食譜式實驗結構的學生講義案例。引導學生使用 ColorMeter App 將色素定量，並使用 Python 隨機抽樣，適合在生物科實驗課中做為學生的操作指引。
+            <strong>💡 教學實操指引：</strong> 打破食譜式實驗結構的學生講義案例。引導學生使用 ColorMeter App 將色素定量，並使用 Python 隨機抽樣，適合直接線上投影或供學生直接點開使用。
           </div>
         </div>
 
-        <div class="resource-card">
-          <div class="card-top">
-            <div class="card-title-section">
-              <span class="file-icon icon-html">HTML</span>
-              <div>
-                <h3>呼吸運動生物數據圖表範例</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">實作案例/圖表例子</p>
-              </div>
-            </div>
-            <div class="card-actions">
-              <a href="實作案例/圖表例子/呼吸運動生物數據圖表_gemini.html" class="action-link link-view">👁️ 在線查看</a>
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 下載</a>
-            </div>
-          </div>
-          <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 包含 AI 模擬生成的呼吸頻率與肺活量等生理學數據圖表。適合在「論證與溝通」教學中，提供給學生進行數據判讀、趨勢分析與推論練習。
-          </div>
-        </div>
-
-        <div class="resource-card">
-          <div class="card-top">
-            <div class="card-title-section">
-              <span class="file-icon icon-word">WORD</span>
-              <div>
-                <h3>AI 輔助設計 探究實作教案範本 (水蚤心搏/校園微生境)</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">實作案例/教案例子 ｜ 支援 Word/PDF 格式</p>
-              </div>
-            </div>
-            <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載</a>
-            </div>
-          </div>
-          <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 提供由 GPT 和 Gemini 協作生成的兩大實作教案，規劃了計數器 App（Tally Counter）在水蚤心率測量中的應用，教師可直接套用並修改。
-          </div>
-        </div>
-
+        <!-- 實作案例/講義例子/光照影響葉綠素穩定性實驗 — 學生講義.pdf -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-pdf">PDF</span>
               <div>
-                <h3>素養導向試題範本 (生態系調查考卷)</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">實作案例/試題例子 ｜ 收錄 NotebookLM/Gemini 生成版本</p>
+                <h3>光照影響葉綠素穩定性實驗 學生講義 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">學生講義 PDF 格式</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載</a>
+              <a href="https://drive.google.com/file/d/1wCTo_4HUZsBA9eF2YJsqoPzCTdXx8Cns/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1wCTo_4HUZsBA9eF2YJsqoPzCTdXx8Cns&export=download" class="action-link link-download">💾 下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 包含大量由 AI 生成的科學閱讀、數據圖表解析、假說論證的混合題型考卷。供教師在學期末評估學生的探究與實作素養能力時直接出題參考。
+            <strong>💡 教學實操指引：</strong> 學生講義 PDF 版本，支援雲端檢視。方便學生在實驗課中使用平板檢視步驟與填寫。
+          </div>
+        </div>
+
+        <!-- 實作案例/教案例子/校園生物觀察學習單_claude.html -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-html">HTML</span>
+              <div>
+                <h3>校園生物觀察學習單 網頁版</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">實作案例/教案例子 ｜ Claude 生成</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="實作案例/教案例子/校園生物觀察學習單_claude.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1QMLIndiHjKsy31EAd-oaxvFiJaeqYZBD&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 由 Claude 輔助設計的校園生物觀察學習單網頁。可在線查看，引導學生踏出教室進行植物或生態調查。
+          </div>
+        </div>
+
+        <!-- 實作案例/氣孔蒸散/Claude/stomata_inquiry_lesson_plan.html -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-html">HTML</span>
+              <div>
+                <h3>校園植物葉片氣孔密度探究 教案網頁</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">實作案例/氣孔蒸散/Claude</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="實作案例/氣孔蒸散/Claude/stomata_inquiry_lesson_plan.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1dy11CcLqw1MVL6CfgJcRYUMsEqSAIcj3&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 氣孔密度探究的教師教案網頁版。供教師直接線上查閱，瞭解如何引導學生利用指甲油複模法與 AI 數據清洗。
+          </div>
+        </div>
+
+        <!-- 實作案例/氣孔蒸散/Claude/stomata_student_worksheet.html -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-html">HTML</span>
+              <div>
+                <h3>校園植物葉片氣孔密度探究 學生學習單網頁</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">實作案例/氣孔蒸散/Claude</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="實作案例/氣孔蒸散/Claude/stomata_student_worksheet.html" class="action-link link-view">👁️ 線上觀看</a>
+              <a href="https://docs.google.com/uc?id=1P1DC-B07yP2MKNiUQGYjSTBVgK3rLOnm&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 氣孔密度探究的學生學習單網頁版。方便直接發送網址給學生在行動載具上開啟，引導進行探究步驟。
+          </div>
+        </div>
+
+        <!-- 實作案例/圖表例子/呼吸運動生物數據圖表_gemini.html -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-html">HTML</span>
+              <div>
+                <h3>呼吸運動生物數據圖表及解析 網頁</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">實作案例/圖表例子 ｜ Gemini 生成</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="實作案例/圖表例子/呼吸運動生物數據圖表_gemini.html" class="action-link link-view">👁️ 線上觀看</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 呼吸數據圖表的網頁版，展示各項呼吸圖表。非常適合供學生線上閱讀與分析。
+          </div>
+        </div>
+
+        <!-- 實作案例/圖表例子/呼吸運動生物數據圖表_gemini.pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>呼吸運動生物數據圖表及解析 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">呼吸生理數據圖表 PDF 格式</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/1T_aP_5ChX74CWuKsrcE6T2jVuQMxNt3N/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1T_aP_5ChX74CWuKsrcE6T2jVuQMxNt3N&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 提供生理數據圖表的 PDF 版本，點擊即可直接在雲端檢視，做為學生課堂討論素材。
+          </div>
+        </div>
+
+        <!-- 實作案例/教案例子/校園微生境探秘：植物分布的秘密地圖教案_gemini.pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>校園微生境探秘：植物分布的秘密地圖教案 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">微生境觀察跨領域教案 PDF 格式</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/18OKS-KO3-l8TlfFLamzl5JFMS0yIAu4J/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=18OKS-KO3-l8TlfFLamzl5JFMS0yIAu4J&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 運用 Felo Search 與 Gemini 檢索設計之跨領域教案 PDF。點選可直接在線上閱讀教案設計。
+          </div>
+        </div>
+
+        <!-- 實作案例/教案例子/自然探究與實作教案_水蚤心搏＿GPT.pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>自然探究與實作教案_水蚤心搏＿GPT PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">水蚤心率實驗教案 PDF 格式</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/1XpDUinBMr_1YqCCO_xnMH4l24Sr0fwxh/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1XpDUinBMr_1YqCCO_xnMH4l24Sr0fwxh&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 水蚤心搏探究教案 PDF。點擊雲端檢視可直接閱讀，瞭解定量測量心率的設計思維。
           </div>
         </div>
       </div>
@@ -729,57 +1009,100 @@
     <!-- 類群 4：解說影音文章 -->
     <div id="tab-media" class="tab-content">
       <div class="resources-grid">
+        <!-- 解說影音/AI在教室：為學生的科學研究超強增能.mp4 -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-video">MP4</span>
               <div>
-                <h3>AI 在教室：為學生的科學研究超強增能教學短片</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">解說影音資料夾 ｜ 包含 2 部精采教學影片</p>
+                <h3>AI 在教室：為學生的科學研究超強增能教學短片 (MP4)</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">解說影音 ｜ 視頻來源檔</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載播放</a>
+              <a href="https://docs.google.com/uc?id=1sLRUYi-QA9wZzRHFfhiBfOMEpj3n6Cii&export=download" class="action-link link-download">💾 直接下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 透過視覺化與具體操作展示，說明 AI 軟體在科學課堂中如何輔助顯微影像定量與物理數據分析，可作為翻轉教室（Flipped Classroom）學生的課前觀看影片。
+            <strong>💡 教學實操指引：</strong> 透過操作展示，說明 AI 軟體在科學課堂中如何輔助顯微影像定量，建議讓學生課前觀看影片。
           </div>
         </div>
 
+        <!-- 解說影音/AI在科學課堂：探究的新夥伴.mp4 -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-video">MP4</span>
+              <div>
+                <h3>AI 在科學課堂：探究的新夥伴影片 (MP4)</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">解說影音 ｜ 推廣影片</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://docs.google.com/uc?id=1OxAM_HZJ33GyRI6rzdNtT_TH8TSAIif8&export=download" class="action-link link-download">💾 直接下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 影片展示了 AI 軟體在課堂上的各項科學協同合作，適合作為課堂導入的宣傳片。
+          </div>
+        </div>
+
+        <!-- 解說影音/AI如何成為高中自然科「探究與實作」的超級助手？...mp3 -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-video">MP3</span>
               <div>
-                <h3>AI 如何成為自然科探究與實作的超級助手 語音解說</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">解說影音資料夾 ｜ 廣播對話音訊</p>
+                <h3>AI 如何成為自然科探究與實作的超級助手 語音解說 (MP3)</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">解說影音 ｜ 雙人 Podcast 對談</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載收聽</a>
+              <a href="https://docs.google.com/uc?id=1hlvrUr4ZXoSFyCwBmZKqwl7MxPaqz7Tw&export=download" class="action-link link-download">💾 直接下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 採雙人輕鬆對話（AI Podcast）的形式，深入淺出介紹 AI 工具（如 Felo Search 檢索、Claude 數據清洗）在高中科學探究的真實落地場景，推薦讓學生在課外通勤或零碎時間收聽。
+            <strong>💡 教學實操指引:</strong> 雙人對話的 AI Podcast 對談音訊。介紹 AI 工具在高中科學探究中的多樣場景，推薦讓學生在課外或通勤時間收聽。
           </div>
         </div>
 
+        <!-- 解說文章/AI賦能 IA增能：自然科學探究與實作的新典範.pdf -->
         <div class="resource-card">
           <div class="card-top">
             <div class="card-title-section">
               <span class="file-icon icon-pdf">PDF</span>
               <div>
-                <h3>AI 賦能 IA 增能：自然科學探究實作新典範推廣文章</h3>
-                <p style="font-size:12px; color:var(--text-secondary);">解說文章資料夾 ｜ 支援 Word/PDF 格式</p>
+                <h3>AI 賦能 IA 增能：自然科學探究實作新典範推廣文章 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">學術文章 PDF 格式</p>
               </div>
             </div>
             <div class="card-actions">
-              <a href="https://drive.google.com/drive/folders/1EFeiK_j5p6UkqsqViLjbB2px7xMjIuq4?usp=drive_link" target="_blank" class="action-link link-download">💾 雲端下載</a>
+              <a href="https://drive.google.com/file/d/1gST88jcJKXL4yc3_vUWJz55JSO9C1B7c/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1gST88jcJKXL4yc3_vUWJz55JSO9C1B7c&export=download" class="action-link link-download">💾 下載</a>
             </div>
           </div>
           <div class="pedagogical-tips">
-            <strong>💡 教學實操指引：</strong> 本學術專論文章探討了 AI 在高中教育現場中定位的轉變——不只是解答工具，而是「智能增強（Intelligence Amplification）」的延伸，提供對資訊科技融合科學教育有興趣的教師研讀。
+            <strong>💡 教學實操指引：</strong> 本學術文章探討了 AI「智能增強（Intelligence Amplification）」的哲學，點選雲端檢視可直接閱讀，適合教師研讀。
+          </div>
+        </div>
+
+        <!-- 解說文章/運用AI輔支工具深化高中自然科探究與實作課程(網頁).pdf -->
+        <div class="resource-card">
+          <div class="card-top">
+            <div class="card-title-section">
+              <span class="file-icon icon-pdf">PDF</span>
+              <div>
+                <h3>運用 AI 輔助工具深化高中自然科探究與實作課程文章 PDF</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">學術文章 PDF 格式</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="https://drive.google.com/file/d/1pETeZoT46n2MGA8k6AdvD4Uj2LIVjKUd/view?usp=drivesdk" target="_blank" class="action-link link-cloud-view">👁️ 雲端檢視</a>
+              <a href="https://docs.google.com/uc?id=1pETeZoT46n2MGA8k6AdvD4Uj2LIVjKUd&export=download" class="action-link link-download">💾 下載</a>
+            </div>
+          </div>
+          <div class="pedagogical-tips">
+            <strong>💡 教學實操指引：</strong> 本文說明了如何將 AI 工具有機融入自然科探究各個階段中，提供教師進行學術研究或備課發展的參考文獻。
           </div>
         </div>
       </div>
@@ -798,16 +1121,34 @@
 </div>
 
 <script>
+  // 切換亮暗色主題
+  function toggleTheme() {
+    const body = document.body;
+    if (body.classList.contains('dark')) {
+      body.classList.remove('dark');
+      body.classList.add('light');
+      localStorage.setItem('theme', 'light');
+    } else {
+      body.classList.remove('light');
+      body.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  // 初始化主題設定
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.className = savedTheme;
+  });
+
+  // 切換 Tab 分類
   function switchTab(evt, tabId) {
-    // Hide all contents
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(c => c.classList.remove('active'));
 
-    // Remove active class from buttons
     const buttons = document.querySelectorAll('.tab-btn');
     buttons.forEach(b => b.classList.remove('active'));
 
-    // Show current content and add active class to clicked button
     document.getElementById(tabId).classList.add('active');
     evt.currentTarget.classList.add('active');
   }

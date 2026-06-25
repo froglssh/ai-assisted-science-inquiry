@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>探究教案｜校園植物葉片氣孔密度</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1a3a2a;
+    --moss: #2d5a3d;
+    --leaf: #4a8c5c;
+    --sage: #7ab891;
+    --mint: #b5d5c5;
+    --cream: #f7f3ec;
+    --paper: #faf8f3;
+    --bark: #5c4a32;
+    --gold: #c9a84c;
+    --warm-white: #fefcf7;
+    --ink: #1c1c1c;
+    --muted: #6b7c6e;
+    --border: #d4e4da;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--ink);
+    line-height: 1.8;
+  }
+
+  /* ── PRINT CONTROLS ── */
+  .print-bar {
+    background: var(--forest);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    font-size: 13px;
+    letter-spacing: .03em;
+  }
+  .print-bar .logo { font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 15px; color: var(--mint); }
+  .btn-print {
+    background: var(--gold);
+    color: var(--forest);
+    border: none;
+    padding: 7px 22px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: opacity .2s;
+  }
+  .btn-print:hover { opacity: .85; }
+
+  /* ── COVER ── */
+  .cover {
+    background: var(--forest);
+    color: var(--warm-white);
+    padding: 56px 48px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    border: 2px solid rgba(180,215,197,.15);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    right: 20px; top: 20px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(180,215,197,.1);
+  }
+  .cover-tag {
+    display: inline-block;
+    border: 1px solid var(--sage);
+    color: var(--sage);
+    font-size: 11px;
+    padding: 3px 12px;
+    border-radius: 2px;
+    letter-spacing: .1em;
+    margin-bottom: 18px;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  .cover h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 24px;
+    max-width: 600px;
+  }
+  .cover h1 span { color: var(--gold); }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 0;
+    max-width: 560px;
+    border: 1px solid rgba(180,215,197,.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .meta-cell {
+    padding: 10px 20px;
+    border-right: 1px solid rgba(180,215,197,.2);
+    font-size: 12px;
+  }
+  .meta-cell:last-child { border-right: none; }
+  .meta-cell .label { color: var(--sage); font-size: 10px; letter-spacing: .08em; margin-bottom: 3px; }
+  .meta-cell .value { font-weight: 600; font-size: 13px; }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 860px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* ── SECTION BLOCKS ── */
+  .section {
+    margin-bottom: 40px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: var(--moss);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-num {
+    background: var(--gold);
+    color: var(--forest);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .section-subtitle { font-size: 12px; color: var(--mint); margin-left: auto; letter-spacing: .04em; }
+  .section-body { padding: 24px; }
+
+  /* ── OBJECTIVE TABLE ── */
+  .obj-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .obj-table th {
+    background: var(--mint);
+    color: var(--forest);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: .04em;
+  }
+  .obj-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .obj-table tr:last-child td { border-bottom: none; }
+  .obj-table tr:nth-child(even) td { background: rgba(181,213,197,.12); }
+  .code-badge {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--mint);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  /* ── HYPOTHESIS FRAME ── */
+  .hypo-box {
+    background: linear-gradient(135deg, rgba(42,90,61,.07) 0%, rgba(181,213,197,.15) 100%);
+    border-left: 4px solid var(--leaf);
+    border-radius: 0 6px 6px 0;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .hypo-box .label { font-size: 11px; font-weight: 700; color: var(--leaf); letter-spacing: .08em; margin-bottom: 6px; }
+  .hypo-template {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    color: var(--forest);
+    font-weight: 600;
+  }
+  .hypo-blank {
+    display: inline-block;
+    min-width: 100px;
+    border-bottom: 2px solid var(--gold);
+    color: var(--gold);
+    font-weight: 700;
+    padding: 0 4px;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--leaf), var(--mint));
+  }
+  .t-item { position: relative; margin-bottom: 20px; }
+  .t-dot {
+    position: absolute;
+    left: -32px; top: 4px;
+    width: 22px; height: 22px;
+    background: var(--leaf);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 11px; font-weight: 700;
+    border: 2px solid var(--paper);
+  }
+  .t-time {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: .06em;
+    margin-bottom: 3px;
+  }
+  .t-title { font-weight: 700; font-size: 15px; color: var(--forest); margin-bottom: 6px; }
+  .t-desc { font-size: 13.5px; color: #3a4a3d; line-height: 1.75; }
+
+  /* ── VARIABLE GRID ── */
+  .var-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+  .var-card { border-radius: 5px; overflow: hidden; }
+  .var-card-head { padding: 9px 14px; font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+  .var-card-body { padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .var-manipulate .var-card-head { background: var(--forest); color: var(--mint); }
+  .var-manipulate .var-card-body { background: rgba(26,58,42,.06); border: 1px solid rgba(26,58,42,.15); border-top: none; }
+  .var-response .var-card-head { background: var(--bark); color: var(--cream); }
+  .var-response .var-card-body { background: rgba(92,74,50,.06); border: 1px solid rgba(92,74,50,.15); border-top: none; }
+  .var-control .var-card-head { background: var(--muted); color: #fff; }
+  .var-control .var-card-body { background: rgba(107,124,110,.06); border: 1px solid rgba(107,124,110,.2); border-top: none; }
+
+  /* ── MATERIALS ── */
+  .materials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .mat-group-title {
+    grid-column: 1 / -1;
+    background: rgba(74,140,92,.12);
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--moss);
+    letter-spacing: .06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .mat-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mat-item:nth-child(even) { border-right: none; }
+  .mat-item:last-child, .mat-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+  .mat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--leaf); flex-shrink: 0; }
+
+  /* ── STEPS ── */
+  .step-list { counter-reset: step; }
+  .step-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .step-num {
+    counter-increment: step;
+    width: 28px; height: 28px;
+    background: var(--moss);
+    color: #fff;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content { font-size: 13.5px; line-height: 1.75; flex: 1; }
+  .step-content strong { color: var(--moss); }
+  .step-tip {
+    margin-top: 5px;
+    background: rgba(201,168,76,.1);
+    border-left: 3px solid var(--gold);
+    padding: 6px 10px;
+    font-size: 12.5px;
+    color: var(--bark);
+  }
+
+  /* ── DATA TABLE ── */
+  .data-table-wrap { overflow-x: auto; }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 540px;
+  }
+  .data-table th {
+    background: var(--forest);
+    color: var(--mint);
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+    font-size: 13px;
+  }
+  .data-table tr:nth-child(even) td { background: rgba(181,213,197,.1); }
+  .data-table .fill-cell {
+    background: rgba(74,140,92,.05);
+    color: var(--muted);
+    font-size: 11px;
+    font-style: italic;
+    min-width: 80px;
+  }
+
+  /* ── AI INTEGRATION ── */
+  .ai-card {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+  }
+  .ai-card-phase {
+    background: var(--forest);
+    color: var(--mint);
+    padding: 14px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    line-height: 1.5;
+  }
+  .ai-card-content { padding: 14px 16px; }
+  .ai-tool-badge {
+    display: inline-block;
+    background: rgba(74,140,92,.12);
+    color: var(--moss);
+    border: 1px solid rgba(74,140,92,.3);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .ai-desc { font-size: 13px; color: #3a4a3d; margin-top: 6px; line-height: 1.65; }
+
+  /* ── ASSESSMENT ── */
+  .assessment-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .assess-card {
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .assess-head { padding: 12px 16px; font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+  .assess-formative .assess-head { background: var(--moss); color: #fff; }
+  .assess-summative .assess-head { background: var(--bark); color: #fff; }
+  .assess-body { padding: 14px 16px; font-size: 13px; line-height: 1.75; }
+
+  /* ── RUBRIC ── */
+  .rubric-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .rubric-table th {
+    background: var(--forest);
+    color: var(--mint);
+    padding: 8px 10px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: .04em;
+  }
+  .rubric-table td { padding: 8px 10px; border: 1px solid var(--border); vertical-align: top; line-height: 1.6; }
+  .rubric-table .dim { font-weight: 700; color: var(--moss); font-size: 12px; }
+  .level-4 { color: #1a3a2a; font-weight: 600; }
+  .level-3 { color: var(--moss); }
+  .level-2 { color: var(--bark); }
+  .level-1 { color: #888; }
+
+  /* ── WORKSHEET ── */
+  .ws-q {
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--warm-white);
+  }
+  .ws-q-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: .08em;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ws-q-level {
+    background: var(--forest);
+    color: var(--mint);
+    font-size: 10px;
+    padding: 1px 8px;
+    border-radius: 10px;
+  }
+  .ws-q-text { font-size: 14px; font-weight: 600; margin-bottom: 8px; line-height: 1.6; }
+  .ws-answer-lines { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .ws-line { border-bottom: 1px solid #ccc; height: 26px; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: rgba(181,213,197,.2);
+    border: 1px solid var(--mint);
+    border-radius: 5px;
+    padding: 14px 18px;
+    font-size: 13px;
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+  .info-box strong { color: var(--moss); }
+
+  /* ── SAFETY BOX ── */
+  .safety-box {
+    background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.4);
+    border-radius: 5px;
+    padding: 14px 18px;
+    font-size: 13px;
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+  .safety-box strong { color: var(--bark); }
+
+  /* ── PRINT ── */
+  @media print {
+    .print-bar { display: none; }
+    body { background: white; }
+    .section { break-inside: avoid; }
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ── ACCORDION ── */
+  .toggle-btn {
+    background: none; border: none;
+    color: var(--mint);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin-left: auto;
+    text-decoration: underline;
+    padding: 0;
+  }
+  .collapsible { overflow: hidden; transition: max-height .3s ease; }
+  .collapsible.closed { max-height: 0; }
+  .collapsible.open { max-height: 2000px; }
+
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { font-size: 13.5px; line-height: 1.75; }
+  h3 { font-family: 'Noto Serif TC', serif; font-size: 15px; color: var(--forest); margin: 18px 0 10px; }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <span class="logo">🌿 探究與實作教案</span>
+  <span>高一自然科學探究與實作｜108課綱</span>
+  <button class="btn-print" onclick="window.print()">列印 / 存PDF</button>
+</div>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-tag">108 課綱 ｜ 探究與實作 ｜ 高一</div>
+  <h1>校園植物葉片<span>氣孔密度</span>的探究<br>
+    <span style="font-size:18px;font-weight:300;color:var(--mint)">Investigating Stomatal Density in Campus Plants</span>
+  </h1>
+  <div class="meta-grid">
+    <div class="meta-cell">
+      <div class="label">科目</div>
+      <div class="value">自然科學探究與實作</div>
+    </div>
+    <div class="meta-cell">
+      <div class="label">年段</div>
+      <div class="value">高一</div>
+    </div>
+    <div class="meta-cell">
+      <div class="label">節數</div>
+      <div class="value">連堂 100 分鐘</div>
+    </div>
+    <div class="meta-cell">
+      <div class="label">探究層次</div>
+      <div class="value">引導式探究</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ── SECTION 1: 學習目標 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title">學習目標</div>
+    <div class="section-subtitle">對應 108 課綱學習表現代碼</div>
+  </div>
+  <div class="section-body">
+    <table class="obj-table">
+      <thead>
+        <tr>
+          <th style="width:70px">面向</th>
+          <th style="width:120px">課綱代碼</th>
+          <th>學習目標</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>認知</strong></td>
+          <td>
+            <span class="code-badge">ai-Vc-2</span><br>
+            <span class="code-badge" style="margin-top:4px;display:inline-block">BDb-Va-5</span>
+          </td>
+          <td>能說明植物氣孔的結構與功能，並解釋氣孔密度與光照、乾濕環境之間的關係，理解植物以此進行水分調節與氣體交換的機制。</td>
+        </tr>
+        <tr>
+          <td><strong>技能</strong></td>
+          <td>
+            <span class="code-badge">pe-Vc-1</span><br>
+            <span class="code-badge" style="margin-top:4px;display:inline-block">pa-Vc-1</span>
+          </td>
+          <td>能自行設計氣孔密度觀察的實驗方案，正確操作光學顯微鏡並利用格線計數法定量分析氣孔密度，將數據整理為統計圖表並進行比較分析。</td>
+        </tr>
+        <tr>
+          <td><strong>情意</strong></td>
+          <td>
+            <span class="code-badge">pc-Vc-1</span><br>
+            <span class="code-badge" style="margin-top:4px;display:inline-block">po-Vc-2</span>
+          </td>
+          <td>能對校園中常見植物產生好奇與觀察興趣，養成以科學方法解釋生活現象的態度，並願意透過同儕討論與資料分享修正自己的推論。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box">
+      <strong>跨科概念連結：</strong>「構造與功能」（氣孔保衛細胞的結構決定其開閉功能）、「改變與穩定」（植物藉氣孔密度因應環境壓力而達到水分平衡）、「科學與生活」（校園綠化植物選種策略）
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 2: 探究問題與假說 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title">探究問題與假說</div>
+    <div class="section-subtitle">學生自擬引導框架</div>
+  </div>
+  <div class="section-body">
+    <h3>🔍 觀察情境導入（教師提供）</h3>
+    <p>教師課前在校園中採集2種植物（陽地植物 vs. 陰地植物）各一片葉，以實物投影機展示葉片外觀差異。提問：「你覺得這兩片葉子在微觀結構上會有什麼不同？對植物的生存有什麼意義？」</p>
+
+    <h3>📋 學生自擬探究問題（引導框架）</h3>
+    <p>教師引導學生使用以下句式，在學習單上完成探究問題：</p>
+    <div class="hypo-box">
+      <div class="label">探究問題句式</div>
+      <div class="hypo-template">「<span class="hypo-blank">____（操縱變因）____</span> 是否會影響 <span class="hypo-blank">____（應變變因）____</span>？」</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">📌 示例（教師板書，學生自行修改）：「生長環境的光照程度是否會影響葉片氣孔的密度？」</p>
+
+    <h3>🧪 假說格式訓練（若…則…因為…）</h3>
+    <div class="hypo-box">
+      <div class="label">標準假說句式訓練</div>
+      <div class="hypo-template">若 <span class="hypo-blank">________</span>，則 <span class="hypo-blank">________</span>，因為 <span class="hypo-blank">________</span>。</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">📌 示例：若陽地植物接受較多直射光，則其葉片氣孔密度高於陰地植物，因為較多氣孔可加速水分蒸散，利於散熱與CO₂吸收，但也需要更精細的調控。</p>
+
+    <div class="info-box">
+      <strong>教師引導重點：</strong>提醒學生假說必須可被實驗「驗證或否證」，並要說明「因為」的科學機制，而非常識判斷。
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 3: 實驗設計 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title">實驗設計</div>
+    <div class="section-subtitle">變因分析 ｜ 材料清單 ｜ 步驟說明</div>
+  </div>
+  <div class="section-body">
+
+    <h3>📊 變因分析</h3>
+    <div class="var-grid">
+      <div class="var-card var-manipulate">
+        <div class="var-card-head">操縱變因（Independent）</div>
+        <div class="var-card-body">
+          植物種類<br>
+          <small>（陽地植物 vs. 陰地植物，或同種植物日照強弱不同葉位）</small>
+        </div>
+      </div>
+      <div class="var-card var-response">
+        <div class="var-card-head">應變變因（Dependent）</div>
+        <div class="var-card-body">
+          單位面積葉片氣孔密度<br>
+          <small>（個／mm²，在顯微鏡視野格線內計數）</small>
+        </div>
+      </div>
+      <div class="var-card var-control">
+        <div class="var-card-head">控制變因（Controlled）</div>
+        <div class="var-card-body">
+          • 取葉位置（葉背中央區域）<br>
+          • 印片方法（透明指甲油）<br>
+          • 顯微鏡倍率（400×）<br>
+          • 計數視野數（每片≥5個隨機視野）<br>
+          • 取樣時間（同一天上午）
+        </div>
+      </div>
+    </div>
+
+    <h3>🧰 材料清單</h3>
+    <div class="materials-grid">
+      <div class="mat-group-title">🔬 顯微鏡操作材料</div>
+      <div class="mat-item"><div class="mat-dot"></div>光學顯微鏡（每組1台）</div>
+      <div class="mat-item"><div class="mat-dot"></div>載玻片、蓋玻片（各10片/組）</div>
+      <div class="mat-item"><div class="mat-dot"></div>透明指甲油（無色，1瓶/組）</div>
+      <div class="mat-item"><div class="mat-dot"></div>透明膠帶（1捲/組）</div>
+      <div class="mat-item"><div class="mat-dot"></div>鑷子（1支/組）</div>
+      <div class="mat-item"><div class="mat-dot"></div>格線計數目鏡（或拍照後用格線量尺）</div>
+      <div class="mat-group-title">🌿 生物材料</div>
+      <div class="mat-item"><div class="mat-dot"></div>陽地植物葉片（如：桂花、杜鵑、榕樹向陽葉）</div>
+      <div class="mat-item"><div class="mat-dot"></div>陰地植物葉片（如：腎蕨、麥門冬、黃金葛）</div>
+      <div class="mat-item"><div class="mat-dot"></div>葉片採集袋（夾鏈袋，保濕用）</div>
+      <div class="mat-group-title">📐 計算與記錄工具</div>
+      <div class="mat-item"><div class="mat-dot"></div>學習單（含數據記錄表格）</div>
+      <div class="mat-item"><div class="mat-dot"></div>平板電腦或手機（拍攝顯微鏡影像）</div>
+      <div class="mat-item"><div class="mat-dot"></div>尺規量尺（換算實際面積用）</div>
+      <div class="mat-item"><div class="mat-dot"></div>計算機或試算表軟體</div>
+    </div>
+
+    <div class="safety-box">
+      <strong>⚠️ 安全注意事項：</strong>
+      透明指甲油含有機溶劑，使用時保持實驗室通風；避免接觸眼睛與嘴巴。蓋玻片屬易碎品，破損時通知老師處理，勿徒手撿取碎片。採集校園植物時，僅取少量葉片，勿損傷植株。
+    </div>
+
+    <h3>📋 實驗步驟</h3>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>課前採樣（課前10分鐘或前一天完成）：</strong>
+          從校園中採集陽地植物與陰地植物各2~3片成熟葉（同種植物取葉片形態相似者），放入夾鏈袋保濕保鮮。選葉時記錄採集地點與光照條件（手機拍照留存）。
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>製作氣孔印片（Nail Polish Peel 方法）：</strong>
+          將透明指甲油薄塗於葉背中央（避開主脈），待其乾燥約3~5分鐘。將透明膠帶黏貼於指甲油層上，用力壓緊後緩慢撕起，帶走指甲油薄膜。
+          <div class="step-tip">💡 技巧：指甲油層太厚時，乾燥較慢且不易撕起；太薄則可能沒有氣孔印記。以能看到薄膜反光為準。</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>製備臨時玻片：</strong>
+          將帶有氣孔印的膠帶黏貼於載玻片上，裁剪多餘部分，直接在顯微鏡下觀察（印片法無需加水封片）。
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>顯微鏡觀察與拍照：</strong>
+          先以100×確認視野中有氣孔分布，再調至400×進行計數。用手機對準目鏡拍攝，儲存影像以備後續計數與AI輔助分析。
+          <div class="step-tip">💡 建議每片葉子隨機拍攝5個不同視野，避免只選氣孔密集處。</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>計數與換算：</strong>
+          在顯微鏡影像上覆蓋格線（可用目鏡格線或後製加入），計算固定面積內的氣孔數量。根據顯微鏡倍率換算為每mm²的實際氣孔密度。
+          <div class="step-tip">💡 計數公式：氣孔密度（個/mm²） = 計數框內氣孔數 ÷ 計數框實際面積（mm²）。400× 時，1格目鏡格線約對應 0.025 mm²（依各校顯微鏡規格確認）。</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <strong>數據整理與統計：</strong>
+          將各視野計數結果填入學習單表格，計算每片葉的平均氣孔密度與標準差（或全距）。以圖表比較不同植物間的氣孔密度差異。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 4: 數據記錄表格 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title">數據記錄表格範本</div>
+    <div class="section-subtitle">可直接列印填寫</div>
+  </div>
+  <div class="section-body">
+
+    <h3>表一：各視野氣孔計數原始紀錄</h3>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:120px">植物種類</th>
+            <th rowspan="2" style="width:60px">葉片編號</th>
+            <th colspan="5">各視野氣孔數（400×，計數框面積：______mm²）</th>
+            <th rowspan="2">平均氣孔數</th>
+            <th rowspan="2">氣孔密度（個/mm²）</th>
+          </tr>
+          <tr>
+            <th>視野1</th><th>視野2</th><th>視野3</th><th>視野4</th><th>視野5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2">陽地植物：<br><span style="color:var(--muted);font-size:11px">（種名：______）</span></td>
+            <td>葉片A</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td>
+          </tr>
+          <tr>
+            <td>葉片B</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td>
+          </tr>
+          <tr>
+            <td rowspan="2">陰地植物：<br><span style="color:var(--muted);font-size:11px">（種名：______）</span></td>
+            <td>葉片A</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td>
+          </tr>
+          <tr>
+            <td>葉片B</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:20px">表二：氣孔密度統計摘要</h3>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>植物種類</th>
+            <th>生長環境（光照）</th>
+            <th>氣孔密度 葉片A（個/mm²）</th>
+            <th>氣孔密度 葉片B（個/mm²）</th>
+            <th>兩片平均（個/mm²）</th>
+            <th>全距</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>陽地植物</td>
+            <td class="fill-cell">陽光直射 / 遮蔭</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td>
+          </tr>
+          <tr>
+            <td>陰地植物</td>
+            <td class="fill-cell">陽光直射 / 遮蔭</td>
+            <td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td><td class="fill-cell">___</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box" style="margin-top:16px">
+      <strong>圖表製作指引（學生完成數據後）：</strong>以植物種類為X軸，氣孔密度（個/mm²）為Y軸，製作長條圖，並加入誤差線（全距 or 標準差）。在圖下方標明圖名、各軸標籤與單位。
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 5: AI 工具整合 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title">AI 工具整合點</div>
+    <div class="section-subtitle">哪個步驟導入哪個工具</div>
+  </div>
+  <div class="section-body">
+
+    <div class="ai-card">
+      <div class="ai-card-phase">🔎 探究歷程<br>發現問題<br>提出假說</div>
+      <div class="ai-card-content">
+        <span class="ai-tool-badge">Perplexity AI</span>
+        <span class="ai-tool-badge">ChatGPT / Claude</span>
+        <div class="ai-desc">
+          學生在形成假說前，以「陽地植物氣孔密度為何較高？」為提示，請AI摘要相關科學背景知識。<br>
+          <strong>教師引導重點：</strong>請學生比對AI說明與自己的假說，確認AI提供的「解釋」不等於他們的「預測」；強調假說必須自己建構。
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-phase">📸 探究歷程<br>數據收集<br>氣孔計數</div>
+      <div class="ai-card-content">
+        <span class="ai-tool-badge">Julius AI</span>
+        <span class="ai-tool-badge">ImageJ（免費軟體）</span>
+        <div class="ai-desc">
+          將顯微鏡拍攝的氣孔影像上傳至 Julius AI，請其自動計數特定視野內的氣孔數量，並與人工計數結果比較。<br>
+          <strong>教師引導重點：</strong>討論AI計數的準確率，引導學生思考：「AI判斷氣孔的依據是什麼？在什麼情況下可能出錯？」培養對AI工具的批判性評估。
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-phase">📊 探究歷程<br>論證建模<br>圖表分析</div>
+      <div class="ai-card-content">
+        <span class="ai-tool-badge">Julius AI</span>
+        <span class="ai-tool-badge">Google 試算表</span>
+        <div class="ai-desc">
+          將班級匯整數據（各組CSV格式）上傳至 Julius AI，請其自動產生比較長條圖，並初步描述數據趨勢。<br>
+          <strong>學習任務：</strong>學生針對AI產生的圖表說明，寫出「補充說明」——指出AI描述中遺漏的變因或更深層的生物意義。
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-phase">✍️ 探究歷程<br>表達分享<br>科學寫作</div>
+      <div class="ai-card-content">
+        <span class="ai-tool-badge">Claude</span>
+        <span class="ai-tool-badge">ChatGPT</span>
+        <div class="ai-desc">
+          學生將自己的「手寫討論段落草稿」輸入AI，請AI以科學期刊「討論（Discussion）」格式協助潤飾。<br>
+          <strong>使用規範（明確告知學生）：</strong>
+          <ul style="margin-top:6px;padding-left:16px;font-size:12.5px">
+            <li>數據、結論、研究限制必須由學生自行填入，AI只做語句修整</li>
+            <li>提交時須附上「原始草稿」與「AI修訂版」，並說明修改了哪些地方</li>
+            <li>這是「AI輔助」而非「AI代寫」</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="safety-box" style="margin-top:4px">
+      <strong>📌 AI整合核心精神（IA 而非 AI）：</strong>
+      本教案所有AI整合點，目的是「增強學生的智識能力（Intelligence Augmentation）」，而非取代學生思考。每個AI使用步驟後，都應有「學生反思與批判」的環節，確保AI是工具，學生是主體。
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 6: 評量方式 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title">評量方式</div>
+    <div class="section-subtitle">形成性 × 總結性</div>
+  </div>
+  <div class="section-body">
+    <div class="assessment-two">
+      <div class="assess-card assess-formative">
+        <div class="assess-head">🌱 形成性評量</div>
+        <div class="assess-body">
+          <strong>「假說-變因設計連結卡」即時檢核</strong><br><br>
+          教師在規劃實驗階段（約第20~30分鐘），暫停5分鐘，請各組在便利貼上寫出：<br>
+          ① 探究問題（1句）<br>
+          ② 假說（若…則…因為…）<br>
+          ③ 操縱/應變/控制各1項<br><br>
+          <strong>評量重點：</strong>假說是否可驗證、變因設計是否合理、控制變因是否完整。<br>
+          <strong>教師反饋：</strong>即時口頭回饋，不評分；若假說無法被驗證，引導修改後繼續實驗。
+        </div>
+      </div>
+      <div class="assess-card assess-summative">
+        <div class="assess-head">📄 總結性評量</div>
+        <div class="assess-body">
+          <strong>「氣孔密度探究小報告」（課後繳交）</strong><br><br>
+          以 IMRD 結構撰寫一份約400~600字的短報告：<br>
+          ① 研究問題與假說（前言）<br>
+          ② 實驗方法摘要（材料方法）<br>
+          ③ 數據圖表（含圖名與說明）<br>
+          ④ 結果是否支持假說？說明理由（討論）<br>
+          ⑤ 研究限制至少1項 + 改進建議<br><br>
+          <strong>評分比重：</strong>數據完整性30% ｜ 論述邏輯40% ｜ 科學寫作規範30%
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px">總結性評量評分尺規（Rubric）</h3>
+    <div style="overflow-x:auto">
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th style="width:110px">評量向度</th>
+          <th>優秀（4分）</th>
+          <th>良好（3分）</th>
+          <th>基本（2分）</th>
+          <th>待加強（1分）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim">假說可驗證性</td>
+          <td class="level-4">假說格式完整，明確連結操縱與應變變因，含科學機制說明</td>
+          <td class="level-3">假說格式正確，連結清楚，機制說明略簡</td>
+          <td class="level-2">有假說但格式不完整，或未連結變因</td>
+          <td class="level-1">無假說或假說無法被實驗驗證</td>
+        </tr>
+        <tr>
+          <td class="dim">數據呈現</td>
+          <td class="level-4">圖表正確完整，含軸標籤、單位、圖名；誤差線呈現</td>
+          <td class="level-3">圖表正確，軸標籤齊全，缺誤差線</td>
+          <td class="level-2">圖表呈現有誤或標籤不齊</td>
+          <td class="level-1">無圖表或數據記錄不完整</td>
+        </tr>
+        <tr>
+          <td class="dim">論述邏輯</td>
+          <td class="level-4">結論有數據支持，能指出數據是否符合假說，並提出生物學解釋</td>
+          <td class="level-3">結論有數據支持，解釋合理但不夠深入</td>
+          <td class="level-2">有結論但與數據連結薄弱</td>
+          <td class="level-1">無結論或結論與數據矛盾</td>
+        </tr>
+        <tr>
+          <td class="dim">研究反思</td>
+          <td class="level-4">指出至少2項研究限制，提出具體可行的改進建議</td>
+          <td class="level-3">指出1項限制並有改進建議</td>
+          <td class="level-2">有提限制但無改進建議</td>
+          <td class="level-1">無研究限制反思</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 7: 學習單引導問題 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title">學習單引導問題</div>
+    <div class="section-subtitle">由淺至深 ｜ 5 題</div>
+  </div>
+  <div class="section-body">
+
+    <div class="ws-q">
+      <div class="ws-q-num">
+        Q1 ── 觀察與描述
+        <span class="ws-q-level">認知層次：記憶／理解</span>
+      </div>
+      <div class="ws-q-text">
+        在顯微鏡下觀察你製作的氣孔印片，描述你看到的氣孔外觀形態。氣孔由哪些細胞組成？你能辨別「開著的氣孔」與「閉著的氣孔」嗎？請試著描述兩者的外觀差異。
+      </div>
+      <div class="ws-answer-lines">
+        <div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div>
+      </div>
+    </div>
+
+    <div class="ws-q">
+      <div class="ws-q-num">
+        Q2 ── 問題形成與假說
+        <span class="ws-q-level">認知層次：分析</span>
+      </div>
+      <div class="ws-q-text">
+        根據你的觀察，寫出你的探究問題與假說。假說請使用「若______，則______，因為______」的格式，並在「因為」後說明你認為可能的生物學機制（可以是你自己的推測，不必正確，但要有邏輯）。
+      </div>
+      <div class="ws-answer-lines">
+        <div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div>
+      </div>
+    </div>
+
+    <div class="ws-q">
+      <div class="ws-q-num">
+        Q3 ── 變因設計與誤差
+        <span class="ws-q-level">認知層次：應用／分析</span>
+      </div>
+      <div class="ws-q-text">
+        你的實驗中，哪些因素可能造成「誤差」？請至少列舉2項，並說明你如何盡可能減少它們的影響。（提示：可從「取樣方式」、「計數方法」、「材料差異」等方向思考。）
+      </div>
+      <div class="ws-answer-lines">
+        <div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div>
+      </div>
+    </div>
+
+    <div class="ws-q">
+      <div class="ws-q-num">
+        Q4 ── 數據解讀與論證
+        <span class="ws-q-level">認知層次：評鑑</span>
+      </div>
+      <div class="ws-q-text">
+        根據你的數據，你的實驗結果是否支持你的假說？請用數據說話（寫出具體數值比較），並解釋「為什麼數據會呈現這個趨勢」。若結果不支持假說，你認為可能的原因是什麼？
+      </div>
+      <div class="ws-answer-lines">
+        <div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div>
+      </div>
+    </div>
+
+    <div class="ws-q">
+      <div class="ws-q-num">
+        Q5 ── 延伸反思與應用
+        <span class="ws-q-level">認知層次：創造／評鑑</span>
+      </div>
+      <div class="ws-q-text">
+        氣孔密度的調整是植物因應環境的策略之一。請從「科學與生活」的角度，思考以下問題（擇一作答或兩者皆答）：<br>
+        (a) 若你是城市規劃師，要選擇耐旱且能有效降溫的行道樹，你會優先選擇氣孔密度較高或較低的植物？請說明理由。<br>
+        (b) 在全球暖化、都市熱島效應加劇的背景下，你預測城市植物的氣孔密度在未來數十年間會如何演化？為什麼？
+      </div>
+      <div class="ws-answer-lines">
+        <div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div><div class="ws-line"></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>教師使用建議：</strong>Q1~Q2 建議在觀察階段（課中）即時填寫；Q3 在討論變因時完成；Q4~Q5 可在課後作為小報告前置作業繳交。Q5 可作為課堂最後10分鐘的小組討論與分享題。
+    </div>
+  </div>
+</div>
+
+<!-- ── TIMELINE: 100分鐘教學流程 ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">⏱</div>
+    <div class="section-title">100 分鐘教學流程</div>
+    <div class="section-subtitle">教師活動 ｜ 學生活動 ｜ 時間分配</div>
+  </div>
+  <div class="section-body">
+    <div class="timeline">
+      <div class="t-item">
+        <div class="t-dot">1</div>
+        <div class="t-time">00:00 – 10:00 ｜ 10 分鐘</div>
+        <div class="t-title">引起動機：葉片的秘密</div>
+        <div class="t-desc">
+          教師以實物投影機展示陽地/陰地植物葉片，請學生「觸摸葉片、對光觀察、比較外觀」，引導學生提問。接著播放30秒氣孔開閉的縮時攝影影片，引發好奇心。最後教師提問：「你猜哪一種植物每平方毫米的氣孔比較多？為什麼？」
+          <br><em style="font-size:12px;color:var(--muted)">學生活動：觀察葉片、發表初始想法（不要求正確）、完成學習單Q1觀察描述</em>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot">2</div>
+        <div class="t-time">10:00 – 30:00 ｜ 20 分鐘</div>
+        <div class="t-title">問題形成與假說建構</div>
+        <div class="t-desc">
+          教師簡介「若…則…因為…」假說句式，示範一個錯誤範例（「氣孔多的植物比較好」）並說明不可驗證的假說為何無效。各組在學習單上完成探究問題與假說，並在便利貼上寫出操縱/應變/控制變因三格。
+          <br><em style="font-size:12px;color:var(--muted)">教師活動：形成性評量「假說連結卡」，即時修正各組假說；AI輔助可選用 Perplexity 查詢背景知識</em>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot">3</div>
+        <div class="t-time">30:00 – 65:00 ｜ 35 分鐘</div>
+        <div class="t-title">實驗操作：印片製備與觀察計數</div>
+        <div class="t-desc">
+          各組進行指甲油印片製備→玻片製作→顯微鏡觀察→拍照→計數，完成數據記錄表格。教師巡視各組，優先協助：印片質量確認、計數方法統一（各組使用相同的計數框大小）。
+          <br><em style="font-size:12px;color:var(--muted)">AI整合點：Julius AI協助氣孔計數（可選）；學生與人工計數結果比較</em>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot">4</div>
+        <div class="t-time">65:00 – 85:00 ｜ 20 分鐘</div>
+        <div class="t-title">數據整理、圖表製作與論證</div>
+        <div class="t-desc">
+          各組將數據填入班級共用試算表（Google Sheets），全班數據即時呈現於投影幕。各組據此製作長條圖，並在學習單Q4寫出「數據是否支持假說？為什麼？」
+          <br><em style="font-size:12px;color:var(--muted)">AI整合點：Julius AI生成圖表→學生補充說明AI遺漏的生物意義</em>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-dot">5</div>
+        <div class="t-time">85:00 – 100:00 ｜ 15 分鐘</div>
+        <div class="t-title">成果分享、延伸討論與課程總結</div>
+        <div class="t-desc">
+          每組派1人發表30秒摘要（探究問題→結論→1項研究限制）。教師歸納各組結果差異，引導討論：「為何不同組別測得的氣孔密度有差異？這是誤差還是真實變異？」最後提示學習單Q5課後完成，並說明課後小報告格式。
+          <br><em style="font-size:12px;color:var(--muted)">學生活動：完成學習單Q5延伸反思，規劃小報告撰寫方向</em>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center;padding:20px 0;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:40px">
+  臺北市立麗山高中 ｜ 自然科學探究與實作 ｜ 108 課綱 ｜ 高一<br>
+  本教案依 108 課綱「自然科學探究與實作」領綱設計，歡迎教師依實際教學現場調整使用。
+</div>
+
+</div><!-- end .main -->
+
+<script>
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (target) {
+        target.classList.toggle('closed');
+        target.classList.toggle('open');
+        btn.textContent = target.classList.contains('open') ? '收合 ▲' : '展開 ▼';
+      }
+    });
+  });
+</script>
+</body>
+</html>

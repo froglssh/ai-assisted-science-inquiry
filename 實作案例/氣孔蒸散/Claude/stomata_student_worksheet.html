@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>學生學習單｜校園植物葉片氣孔密度探究</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #1a3a2a;
+  --moss: #2d5a3d;
+  --leaf: #4a8c5c;
+  --sage: #7ab891;
+  --mint: #b5d5c5;
+  --cream: #f7f3ec;
+  --paper: #faf8f3;
+  --bark: #5c4a32;
+  --gold: #c9a84c;
+  --warm-white: #fefcf7;
+  --ink: #1c1c1c;
+  --muted: #6b7c6e;
+  --border: #d4e4da;
+  --light-gold: rgba(201,168,76,.12);
+  --light-green: rgba(74,140,92,.08);
+  --light-bark: rgba(92,74,50,.07);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #e8e4dc;
+  font-family: 'Noto Sans TC', sans-serif;
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+/* ══ TOP BAR ══ */
+.print-bar {
+  background: var(--forest);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 32px;
+  position: sticky; top: 0; z-index: 100;
+  font-size: 13px;
+}
+.print-bar .logo {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700; font-size: 15px; color: var(--mint);
+}
+.btn-print {
+  background: var(--gold); color: var(--forest);
+  border: none; padding: 7px 20px; border-radius: 3px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: opacity .2s;
+}
+.btn-print:hover { opacity: .82; }
+
+/* ══ PAGE SHELL ══ */
+.page {
+  max-width: 800px;
+  margin: 24px auto;
+  background: var(--warm-white);
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 24px rgba(0,0,0,.1);
+}
+
+/* ══ COVER STRIP ══ */
+.ws-cover {
+  background: var(--forest);
+  padding: 32px 40px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.ws-cover::before {
+  content: '';
+  position: absolute; right: -80px; top: -80px;
+  width: 280px; height: 280px; border-radius: 50%;
+  border: 1px solid rgba(181,213,197,.15);
+}
+.ws-cover-tag {
+  font-size: 11px; letter-spacing: .1em;
+  color: var(--sage); border: 1px solid var(--sage);
+  display: inline-block; padding: 2px 10px; border-radius: 2px;
+  margin-bottom: 12px;
+}
+.ws-cover h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 22px; font-weight: 700;
+  color: #fff; line-height: 1.45;
+  margin-bottom: 20px;
+}
+.ws-cover h1 em { color: var(--gold); font-style: normal; }
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 1px solid rgba(181,213,197,.25);
+  border-radius: 3px; overflow: hidden;
+}
+.info-cell {
+  padding: 8px 12px;
+  border-right: 1px solid rgba(181,213,197,.2);
+  font-size: 12px;
+}
+.info-cell:last-child { border-right: none; }
+.info-cell .lbl { color: var(--sage); font-size: 10px; letter-spacing: .06em; margin-bottom: 3px; }
+.info-cell .val { color: #fff; font-weight: 600; font-size: 13px; }
+.info-cell input[type="text"] {
+  background: transparent;
+  border: none; border-bottom: 1px solid rgba(181,213,197,.4);
+  color: #fff; font-size: 13px; font-weight: 600;
+  width: 100%; outline: none;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+/* ══ SECTION WRAPPER ══ */
+.ws-body { padding: 0 40px 48px; }
+
+/* ══ SECTION HEADER ══ */
+.sec-head {
+  display: flex; align-items: center; gap: 10px;
+  margin: 32px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--forest);
+}
+.sec-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--forest); color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.sec-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 17px; font-weight: 700; color: var(--forest);
+}
+.sec-badge {
+  margin-left: auto; font-size: 11px;
+  background: var(--mint); color: var(--forest);
+  padding: 2px 10px; border-radius: 10px; font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ══ CALLOUT BOXES ══ */
+.callout {
+  border-radius: 4px; padding: 12px 16px;
+  font-size: 13px; margin-bottom: 14px; line-height: 1.7;
+}
+.callout-green { background: var(--light-green); border-left: 3px solid var(--leaf); }
+.callout-gold { background: var(--light-gold); border-left: 3px solid var(--gold); }
+.callout-bark { background: var(--light-bark); border-left: 3px solid var(--bark); }
+.callout strong { font-weight: 700; }
+.callout-green strong { color: var(--moss); }
+.callout-gold strong { color: var(--bark); }
+
+/* ══ WRITE LINES ══ */
+.write-area { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.wline { border-bottom: 1px solid #bbb; min-height: 28px; }
+.wline-short { width: 60%; }
+
+/* ══ HYPOTHESIS BUILDER ══ */
+.hypo-builder {
+  border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+  margin: 14px 0;
+}
+.hypo-row {
+  display: grid; grid-template-columns: 60px 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.hypo-row:last-child { border-bottom: none; }
+.hypo-kw {
+  background: var(--forest); color: var(--gold);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px 8px;
+}
+.hypo-input-cell { padding: 10px 14px; }
+.hypo-hint { font-size: 11px; color: var(--muted); margin-bottom: 4px; letter-spacing: .02em; }
+.hypo-line { border: none; border-bottom: 1px solid var(--border); width: 100%; padding: 4px 0; font-size: 14px; outline: none; font-family: 'Noto Sans TC', sans-serif; background: transparent; }
+
+/* ══ VARIABLE MATRIX ══ */
+.var-matrix {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+  margin: 14px 0;
+}
+.vm-col { border-right: 1px solid var(--border); }
+.vm-col:last-child { border-right: none; }
+.vm-head { padding: 9px 14px; font-size: 12px; font-weight: 700; letter-spacing: .05em; }
+.vm-head-m { background: var(--forest); color: var(--mint); }
+.vm-head-r { background: var(--bark); color: #f5ede0; }
+.vm-head-c { background: var(--muted); color: #fff; }
+.vm-body { padding: 12px 14px; }
+.vm-sub { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-style: italic; }
+.vm-lines { display: flex; flex-direction: column; gap: 7px; }
+.vm-line { border-bottom: 1px solid #ccc; min-height: 24px; font-size: 13px; }
+
+/* ══ STEP CHECKLIST ══ */
+.step-check { list-style: none; margin: 10px 0; }
+.step-check li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px dashed var(--border);
+  font-size: 13.5px; line-height: 1.65;
+}
+.step-check li:last-child { border-bottom: none; }
+.chk {
+  width: 18px; height: 18px; border: 2px solid var(--leaf);
+  border-radius: 3px; flex-shrink: 0; margin-top: 3px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .15s;
+}
+.chk.done { background: var(--leaf); }
+.chk.done::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+.step-text strong { color: var(--moss); }
+.step-obs {
+  margin-top: 6px; padding: 6px 10px;
+  background: rgba(181,213,197,.15); border-radius: 3px;
+  font-size: 12px; color: var(--muted);
+}
+.step-obs-lines { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+.step-obs-line { border-bottom: 1px solid #ccc; min-height: 22px; }
+
+/* ══ SKETCH BOX ══ */
+.sketch-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+.sketch-box {
+  border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+}
+.sketch-box-head {
+  background: rgba(74,140,92,.1); padding: 7px 12px;
+  font-size: 12px; font-weight: 700; color: var(--moss);
+  border-bottom: 1px solid var(--border);
+}
+.sketch-area {
+  height: 160px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: #fff;
+  position: relative;
+}
+.sketch-guide {
+  width: 120px; height: 120px; border-radius: 50%;
+  border: 1px dashed #bbb;
+  display: flex; align-items: center; justify-content: center;
+}
+.sketch-guide-text { font-size: 11px; color: #ccc; text-align: center; line-height: 1.5; }
+.sketch-label { padding: 6px 12px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); }
+.sketch-label input { border: none; border-bottom: 1px solid #ccc; font-size: 11px; width: 100%; outline: none; background: transparent; font-family: 'Noto Sans TC', sans-serif; }
+
+/* ══ DATA TABLE ══ */
+.dt-wrap { overflow-x: auto; margin: 10px 0; }
+.dt {
+  width: 100%; border-collapse: collapse;
+  font-size: 12.5px; min-width: 540px;
+}
+.dt th {
+  background: var(--forest); color: var(--mint);
+  padding: 9px 10px; text-align: center;
+  font-size: 11px; font-weight: 600; letter-spacing: .04em;
+}
+.dt td {
+  padding: 9px 10px; border: 1px solid var(--border);
+  text-align: center; font-size: 12.5px;
+}
+.dt .fill { background: rgba(181,213,197,.1); color: var(--muted); font-size: 11px; font-style: italic; }
+.dt .rowh { background: rgba(26,58,42,.06); font-weight: 600; font-size: 12px; color: var(--forest); text-align: left; padding-left: 12px; }
+.dt .avg-row td { background: rgba(201,168,76,.1); font-weight: 700; color: var(--bark); }
+.dt .formula-row td { background: rgba(26,58,42,.04); font-size: 11px; color: var(--muted); }
+
+/* ══ CHART GRID ══ */
+.chart-frame {
+  border: 1px solid var(--border); border-radius: 5px; padding: 16px;
+  margin: 14px 0;
+}
+.chart-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.chart-title-lbl { font-size: 11px; color: var(--muted); }
+.chart-title-line { flex: 1; border-bottom: 1px solid #ccc; height: 22px; }
+.chart-grid-area {
+  border: 1px solid #bbb;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 29px,
+    #e0e0d8 29px,
+    #e0e0d8 30px
+  ),
+  repeating-linear-gradient(
+    to right,
+    transparent 0px,
+    transparent 59px,
+    #e0e0d8 59px,
+    #e0e0d8 60px
+  );
+  height: 200px; margin-bottom: 4px;
+  position: relative;
+}
+.chart-y-label {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 11px; color: var(--muted);
+  position: absolute; left: -28px; top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  white-space: nowrap;
+}
+.chart-x-labels { display: flex; gap: 0; margin-top: 4px; }
+.chart-x-item { flex: 1; text-align: center; font-size: 11px; color: var(--muted); padding-top: 4px; }
+.chart-outer { position: relative; padding-left: 36px; }
+.chart-scale {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  display: flex; flex-direction: column-reverse;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+.chart-scale span { font-size: 10px; color: var(--muted); }
+.chart-caption { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
+.chart-caption input { border: none; border-bottom: 1px dashed #bbb; font-size: 11px; outline: none; font-family: 'Noto Sans TC', sans-serif; width: 280px; text-align: center; background: transparent; }
+
+/* ══ DISCUSSION QUESTIONS ══ */
+.dq-item {
+  margin-bottom: 22px;
+  border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+}
+.dq-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--light-green);
+  border-bottom: 1px solid var(--border);
+}
+.dq-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--moss); color: #fff;
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.dq-level {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  background: var(--forest); color: var(--mint);
+  padding: 2px 8px; border-radius: 10px; letter-spacing: .04em;
+  white-space: nowrap;
+}
+.dq-q { font-size: 14px; font-weight: 600; line-height: 1.55; }
+.dq-body { padding: 12px 16px; }
+.dq-hint { font-size: 12px; color: var(--muted); margin-bottom: 8px; line-height: 1.6; }
+.dq-hint span { color: var(--leaf); font-weight: 600; }
+.dq-lines { display: flex; flex-direction: column; gap: 8px; }
+.dq-line { border-bottom: 1px solid #ccc; min-height: 26px; }
+
+/* ══ AI REFLECTION ══ */
+.ai-ref-card {
+  border: 1px solid var(--border); border-radius: 5px;
+  overflow: hidden; margin-bottom: 16px;
+}
+.ai-ref-head {
+  display: grid; grid-template-columns: 140px 1fr;
+  background: var(--forest);
+}
+.ai-ref-phase {
+  padding: 12px 14px; font-size: 12px; font-weight: 700;
+  color: var(--mint); line-height: 1.5;
+  border-right: 1px solid rgba(181,213,197,.2);
+}
+.ai-ref-q {
+  padding: 12px 14px; font-size: 13px; font-weight: 600;
+  color: #fff; line-height: 1.5;
+}
+.ai-ref-body { padding: 12px 16px; background: var(--warm-white); }
+.ai-tool-tag {
+  display: inline-block;
+  background: rgba(74,140,92,.12); color: var(--moss);
+  border: 1px solid rgba(74,140,92,.3);
+  border-radius: 10px; font-size: 10px; font-weight: 700;
+  padding: 1px 8px; margin-right: 5px; margin-bottom: 6px;
+}
+.ai-ref-lines { display: flex; flex-direction: column; gap: 7px; margin-top: 8px; }
+.ai-ref-line { border-bottom: 1px solid #ccc; min-height: 24px; }
+
+/* ══ CONCLUSION FORM ══ */
+.conclusion-form {
+  border: 2px solid var(--forest); border-radius: 6px; overflow: hidden;
+  margin: 14px 0;
+}
+.conc-head {
+  background: var(--forest); color: #fff;
+  padding: 10px 18px; font-size: 14px; font-weight: 700;
+  font-family: 'Noto Serif TC', serif; letter-spacing: .04em;
+}
+.conc-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+.conc-field label {
+  font-size: 12px; font-weight: 700; color: var(--moss);
+  letter-spacing: .05em; display: block; margin-bottom: 5px;
+}
+.conc-field .cline { border-bottom: 1px solid #bbb; min-height: 26px; margin-bottom: 6px; }
+
+/* ══ SELF-EVAL ══ */
+.self-eval-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+.self-eval-table th {
+  background: var(--moss); color: #fff;
+  padding: 8px 12px; font-size: 12px; font-weight: 600;
+  text-align: center;
+}
+.self-eval-table td {
+  padding: 9px 12px; border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.self-eval-table tr:last-child td { border-bottom: none; }
+.star-row { display: flex; gap: 6px; justify-content: center; }
+.star {
+  width: 20px; height: 20px; cursor: pointer;
+  font-size: 18px; line-height: 1;
+  color: #ccc; transition: color .15s;
+  user-select: none;
+}
+.star.lit { color: var(--gold); }
+
+/* ══ PAGE BREAK HINT ══ */
+.pg-break {
+  border-top: 2px dashed #ccc;
+  margin: 32px 0 0;
+  padding-top: 6px;
+  font-size: 11px; color: var(--muted); text-align: center; letter-spacing: .08em;
+}
+
+/* ══ PRINT ══ */
+@media print {
+  .print-bar { display: none; }
+  body { background: white; }
+  .page { box-shadow: none; border: none; margin: 0; max-width: 100%; }
+  .pg-break { page-break-before: always; border: none; }
+  .chk { border: 2px solid #999 !important; }
+  .sketch-guide { border: 1px dashed #999; }
+}
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <span class="logo">🌿 學生學習單</span>
+  <span>校園植物葉片氣孔密度探究 ｜ 高一自然科學探究與實作</span>
+  <button class="btn-print" onclick="window.print()">列印 / 存PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- ══ COVER ══ -->
+  <div class="ws-cover">
+    <div class="ws-cover-tag">108 課綱 ｜ 探究與實作 ｜ 高一</div>
+    <h1>校園植物葉片<em>氣孔密度</em>的探究<br>
+      <span style="font-size:15px;font-weight:300;color:var(--mint)">Investigating Stomatal Density in Campus Plants</span>
+    </h1>
+    <div class="info-row">
+      <div class="info-cell">
+        <div class="lbl">班級</div>
+        <input type="text" class="val" placeholder="　　年　　班">
+      </div>
+      <div class="info-cell">
+        <div class="lbl">組別</div>
+        <input type="text" class="val" placeholder="第　　組">
+      </div>
+      <div class="info-cell">
+        <div class="lbl">姓名</div>
+        <input type="text" class="val" placeholder="">
+      </div>
+      <div class="info-cell">
+        <div class="lbl">座號</div>
+        <input type="text" class="val" placeholder="">
+      </div>
+      <div class="info-cell">
+        <div class="lbl">日期</div>
+        <input type="text" class="val" placeholder="　　年　　月　　日">
+      </div>
+    </div>
+  </div>
+
+  <div class="ws-body">
+
+    <!-- ════════════════════════════════
+         PART A：假說與變因設計
+    ════════════════════════════════ -->
+    <div class="sec-head">
+      <div class="sec-icon">A</div>
+      <div class="sec-title">假說建構與變因設計</div>
+      <div class="sec-badge">發現問題 ｜ 規劃研究</div>
+    </div>
+
+    <div class="callout callout-green">
+      <strong>📋 情境說明：</strong>
+      你觀察到校園中有些植物長在陽光直射的地方（陽地植物），有些則長在樹蔭下（陰地植物）。
+      這兩類植物的葉片在微觀結構上，氣孔的數量是否有差異？你的任務是設計實驗來探究這個問題。
+    </div>
+
+    <!-- A1 探究問題 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:14px 0 6px">
+      A-1｜請寫出你的探究問題
+    </p>
+    <div class="callout callout-gold">
+      <strong>格式提示：</strong>「______（操縱變因）是否會影響______（應變變因）？」
+    </div>
+    <div class="write-area" style="margin-top:6px">
+      <div class="wline"></div>
+      <div class="wline"></div>
+    </div>
+
+    <!-- A2 假說 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:18px 0 6px">
+      A-2｜請寫出你的假說（若…則…因為…格式）
+    </p>
+    <div class="hypo-builder">
+      <div class="hypo-row">
+        <div class="hypo-kw">若</div>
+        <div class="hypo-input-cell">
+          <div class="hypo-hint">操縱變因（你改變的條件）</div>
+          <input class="hypo-line" type="text" placeholder="例：陽地植物接受的光照強度較強…">
+        </div>
+      </div>
+      <div class="hypo-row">
+        <div class="hypo-kw">則</div>
+        <div class="hypo-input-cell">
+          <div class="hypo-hint">預期的應變變因結果</div>
+          <input class="hypo-line" type="text" placeholder="例：其葉片氣孔密度高於陰地植物…">
+        </div>
+      </div>
+      <div class="hypo-row">
+        <div class="hypo-kw">因為</div>
+        <div class="hypo-input-cell">
+          <div class="hypo-hint">你認為可能的生物學機制（推測即可，不必完全正確）</div>
+          <input class="hypo-line" type="text" placeholder="例：陽地環境蒸散作用旺盛，需要更多氣孔進行氣體交換與散熱…">
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 變因設計矩陣 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:18px 0 6px">
+      A-3｜變因設計矩陣
+    </p>
+    <div class="var-matrix">
+      <div class="vm-col">
+        <div class="vm-head vm-head-m">🔧 操縱變因</div>
+        <div class="vm-body">
+          <div class="vm-sub">你主動改變的條件</div>
+          <div class="vm-lines">
+            <div class="vm-line"></div>
+            <div class="vm-line"></div>
+          </div>
+        </div>
+      </div>
+      <div class="vm-col">
+        <div class="vm-head vm-head-r">📏 應變變因</div>
+        <div class="vm-body">
+          <div class="vm-sub">你量測的結果（含單位）</div>
+          <div class="vm-lines">
+            <div class="vm-line"></div>
+            <div class="vm-line"></div>
+          </div>
+        </div>
+      </div>
+      <div class="vm-col">
+        <div class="vm-head vm-head-c">🔒 控制變因</div>
+        <div class="vm-body">
+          <div class="vm-sub">維持不變的條件（至少3項）</div>
+          <div class="vm-lines">
+            <div class="vm-line"></div>
+            <div class="vm-line"></div>
+            <div class="vm-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-gold" style="margin-top:4px">
+      <strong>🤔 思考一下：</strong>
+      為什麼需要「控制變因」？如果不控制這些因素，你的實驗結論會有什麼問題？
+      <div class="write-area" style="margin-top:8px">
+        <div class="wline"></div>
+        <div class="wline"></div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════════════
+         PART B：實驗操作記錄
+    ════════════════════════════════ -->
+    <div class="sec-head">
+      <div class="sec-icon">B</div>
+      <div class="sec-title">實驗操作記錄</div>
+      <div class="sec-badge">規劃研究 ｜ 實作執行</div>
+    </div>
+
+    <!-- B1 步驟打勾 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:0 0 10px">
+      B-1｜操作步驟確認清單（完成後打勾 ✓）
+    </p>
+    <ul class="step-check" id="stepList">
+      <li>
+        <div class="chk" onclick="toggleCheck(this)"></div>
+        <div class="step-text">
+          <strong>步驟一：採集葉片</strong><br>
+          採集陽地植物與陰地植物各2片成熟葉，放入夾鏈袋保濕。拍照記錄採集位置。
+          <div class="step-obs">
+            📝 採集記錄：
+            <div class="step-obs-lines">
+              <div class="step-obs-line"></div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="chk" onclick="toggleCheck(this)"></div>
+        <div class="step-text">
+          <strong>步驟二：製作指甲油印片</strong><br>
+          將透明指甲油薄塗於葉背中央（避開主脈），靜待3~5分鐘完全乾燥。
+          <div class="step-obs">
+            📝 觀察：指甲油層是否均勻？有無起泡或過厚？
+            <div class="step-obs-lines">
+              <div class="step-obs-line"></div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="chk" onclick="toggleCheck(this)"></div>
+        <div class="step-text">
+          <strong>步驟三：撕取印膜、製備玻片</strong><br>
+          以透明膠帶黏貼並撕起指甲油薄膜，平貼於載玻片上。
+        </div>
+      </li>
+      <li>
+        <div class="chk" onclick="toggleCheck(this)"></div>
+        <div class="step-text">
+          <strong>步驟四：低倍鏡確認（100×）→ 換高倍鏡（400×）</strong><br>
+          先確認視野中有氣孔分布，再換400×進行計數。
+          <div class="step-obs">
+            📝 100× 視野描述（氣孔密度稀疏/普通/密集？排列是否規則？）：
+            <div class="step-obs-lines">
+              <div class="step-obs-line"></div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="chk" onclick="toggleCheck(this)"></div>
+        <div class="step-text">
+          <strong>步驟五：拍照 + 隨機選取5個計數視野</strong><br>
+          拍攝顯微影像（至少5張），計數每個視野格線框內的氣孔數量。
+        </div>
+      </li>
+      <li>
+        <div class="chk" onclick="toggleCheck(this)"></div>
+        <div class="step-text">
+          <strong>步驟六：換另一植物種類，重複步驟一至五</strong>
+        </div>
+      </li>
+    </ul>
+
+    <!-- B2 顯微鏡繪圖 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:18px 0 8px">
+      B-2｜顯微鏡觀察繪圖（400×）
+    </p>
+    <div class="callout callout-green" style="margin-bottom:10px">
+      <strong>繪圖要求：</strong>在圓形視野框內，描繪你在400×觀察到的氣孔分布。標示保衛細胞與氣孔口，並在下方記錄倍率、計數框面積。
+    </div>
+    <div class="sketch-row">
+      <div class="sketch-box">
+        <div class="sketch-box-head">🌿 陽地植物（種名：___________）</div>
+        <div class="sketch-area">
+          <div class="sketch-guide">
+            <div class="sketch-guide-text">在此圓形範圍內<br>繪製顯微影像</div>
+          </div>
+        </div>
+        <div class="sketch-label">
+          倍率：400× ｜ 計數框面積：<input type="text" placeholder="_______ mm²"> ｜ 此視野氣孔數：<input type="text" placeholder="_____ 個">
+        </div>
+      </div>
+      <div class="sketch-box">
+        <div class="sketch-box-head">🌿 陰地植物（種名：___________）</div>
+        <div class="sketch-area">
+          <div class="sketch-guide">
+            <div class="sketch-guide-text">在此圓形範圍內<br>繪製顯微影像</div>
+          </div>
+        </div>
+        <div class="sketch-label">
+          倍率：400× ｜ 計數框面積：<input type="text" placeholder="_______ mm²"> ｜ 此視野氣孔數：<input type="text" placeholder="_____ 個">
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════════════
+         PART C：數據記錄與圖表製作
+    ════════════════════════════════ -->
+    <div class="pg-break">─── 第二頁 ───</div>
+
+    <div class="sec-head" style="margin-top:28px">
+      <div class="sec-icon">C</div>
+      <div class="sec-title">數據記錄與圖表製作</div>
+      <div class="sec-badge">論證與建模</div>
+    </div>
+
+    <!-- C1 原始數據 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:0 0 10px">
+      C-1｜氣孔計數原始數據表
+    </p>
+    <div class="dt-wrap">
+      <table class="dt">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:120px">植物種類</th>
+            <th rowspan="2" style="width:55px">葉片</th>
+            <th colspan="5">各視野計數框內氣孔數（400×）</th>
+            <th rowspan="2" style="width:60px">合計</th>
+            <th rowspan="2" style="width:60px">平均數</th>
+          </tr>
+          <tr>
+            <th>視野1</th><th>視野2</th><th>視野3</th><th>視野4</th><th>視野5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rowh" rowspan="2">陽地植物<br><span style="font-size:10px;font-weight:400;color:var(--muted)">（種名：______）</span></td>
+            <td>葉A</td>
+            <td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td>
+            <td class="fill">___</td><td class="fill">___</td>
+          </tr>
+          <tr>
+            <td>葉B</td>
+            <td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td>
+            <td class="fill">___</td><td class="fill">___</td>
+          </tr>
+          <tr>
+            <td class="rowh" rowspan="2">陰地植物<br><span style="font-size:10px;font-weight:400;color:var(--muted)">（種名：______）</span></td>
+            <td>葉A</td>
+            <td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td>
+            <td class="fill">___</td><td class="fill">___</td>
+          </tr>
+          <tr>
+            <td>葉B</td>
+            <td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td>
+            <td class="fill">___</td><td class="fill">___</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- C2 換算 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:18px 0 8px">
+      C-2｜氣孔密度換算（個／mm²）
+    </p>
+    <div class="callout callout-gold">
+      <strong>換算公式：</strong>
+      氣孔密度（個/mm²）＝ 計數框內氣孔平均數 ÷ 計數框實際面積（mm²）<br>
+      <span style="font-size:12px;color:var(--muted)">
+        ⚙️ 計數框面積計算方式：在400×下，若目鏡格線一小格為 0.025 mm²（請依你的顯微鏡規格確認），則填入此值。
+      </span>
+    </div>
+    <div class="dt-wrap" style="margin-top:10px">
+      <table class="dt">
+        <thead>
+          <tr>
+            <th>植物種類</th>
+            <th>生長環境</th>
+            <th>葉A 密度（個/mm²）</th>
+            <th>葉B 密度（個/mm²）</th>
+            <th>兩片平均（個/mm²）</th>
+            <th>全距</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rowh">陽地植物</td>
+            <td class="fill">陽光直射 □ ／ 遮蔭 □</td>
+            <td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td>
+          </tr>
+          <tr>
+            <td class="rowh">陰地植物</td>
+            <td class="fill">陽光直射 □ ／ 遮蔭 □</td>
+            <td class="fill">___</td><td class="fill">___</td><td class="fill">___</td><td class="fill">___</td>
+          </tr>
+          <tr class="avg-row">
+            <td colspan="2" style="text-align:center">全班各組數據平均（教師提供）</td>
+            <td colspan="2" class="fill">陽地平均：_______</td>
+            <td colspan="2" class="fill">陰地平均：_______</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- C3 長條圖 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:18px 0 8px">
+      C-3｜手繪長條圖：比較兩種植物的氣孔密度
+    </p>
+    <div class="chart-frame">
+      <div class="chart-title-row">
+        <span class="chart-title-lbl">圖名：</span>
+        <div class="chart-title-line"></div>
+      </div>
+      <div class="chart-outer">
+        <div class="chart-scale">
+          <span>____</span><span>____</span><span>____</span><span>____</span><span>____</span><span>0</span>
+        </div>
+        <div class="chart-grid-area">
+          <!-- 學生手繪填充 -->
+        </div>
+      </div>
+      <div class="chart-x-labels">
+        <div class="chart-x-item">陽地植物<br>（_______________）</div>
+        <div class="chart-x-item">陰地植物<br>（_______________）</div>
+        <div class="chart-x-item" style="font-style:italic;color:#ccc">（可加入第3組）</div>
+      </div>
+      <div class="chart-caption">圖名：<input type="text" placeholder="請在此填入圖名（含變因與單位）"></div>
+    </div>
+    <div class="callout callout-green" style="margin-top:4px;font-size:12.5px">
+      <strong>製圖提醒：</strong>① 先決定Y軸刻度範圍（依數據調整）② 長條頂端加誤差線（全距）③ X軸標植物種名 ④ 圖名需說明「什麼 vs. 什麼，量測的是什麼」
+    </div>
+
+
+    <!-- ════════════════════════════════
+         PART D：討論與反思題
+    ════════════════════════════════ -->
+    <div class="sec-head">
+      <div class="sec-icon">D</div>
+      <div class="sec-title">討論與反思</div>
+      <div class="sec-badge">論證建模 ｜ 表達分享</div>
+    </div>
+
+    <div class="dq-item">
+      <div class="dq-head">
+        <div class="dq-num">1</div>
+        <div class="dq-q">觀察描述：在400×顯微鏡下，你觀察到的氣孔外觀特徵為何？能否辨別開著與閉著的氣孔？請描述保衛細胞的形狀。</div>
+        <div class="dq-level">記憶／理解</div>
+      </div>
+      <div class="dq-body">
+        <div class="dq-hint">💡 提示：觀察 <span>保衛細胞</span> 的形狀（腎形？啞鈴形？）、細胞壁的厚薄差異、與周圍表皮細胞的形態比較。</div>
+        <div class="dq-lines">
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dq-item">
+      <div class="dq-head">
+        <div class="dq-num">2</div>
+        <div class="dq-q">數據論證：你的實驗結果是否支持假說？請用具體數值（個/mm²）說明，並解釋數據趨勢的生物學意義。</div>
+        <div class="dq-level">應用／分析</div>
+      </div>
+      <div class="dq-body">
+        <div class="dq-hint">💡 格式參考：「本組陽地植物氣孔密度為 ___ 個/mm²，陰地植物為 ___ 個/mm²，兩者相差 ___ 倍。此結果（支持／不支持）假說，因為……」</div>
+        <div class="dq-lines">
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dq-item">
+      <div class="dq-head">
+        <div class="dq-num">3</div>
+        <div class="dq-q">誤差分析：各組的測量結果可能不同。列舉至少2項可能的誤差來源，並說明下次實驗如何改進。</div>
+        <div class="dq-level">分析／評鑑</div>
+      </div>
+      <div class="dq-body">
+        <div class="dq-hint">💡 方向提示：取樣位置是否代表性足夠？計數框設定是否一致？印片品質是否影響計數？</div>
+        <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:13px">
+          <thead>
+            <tr>
+              <th style="background:var(--moss);color:#fff;padding:7px 10px;text-align:left;font-weight:600;font-size:12px;border:1px solid var(--border)">誤差來源</th>
+              <th style="background:var(--moss);color:#fff;padding:7px 10px;text-align:left;font-weight:600;font-size:12px;border:1px solid var(--border)">可能影響的方向</th>
+              <th style="background:var(--moss);color:#fff;padding:7px 10px;text-align:left;font-weight:600;font-size:12px;border:1px solid var(--border)">改進方式</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid var(--border);height:32px"></td>
+              <td style="padding:8px 10px;border:1px solid var(--border)"></td>
+              <td style="padding:8px 10px;border:1px solid var(--border)"></td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid var(--border);height:32px"></td>
+              <td style="padding:8px 10px;border:1px solid var(--border)"></td>
+              <td style="padding:8px 10px;border:1px solid var(--border)"></td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px;border:1px solid var(--border);height:32px"></td>
+              <td style="padding:8px 10px;border:1px solid var(--border)"></td>
+              <td style="padding:8px 10px;border:1px solid var(--border)"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dq-item">
+      <div class="dq-head">
+        <div class="dq-num">4</div>
+        <div class="dq-q">同儕比較：你的結果與其他組別是否一致？若有差異，你認為最主要的原因是什麼？這是「測量誤差」還是「真實的生物差異」？如何判斷？</div>
+        <div class="dq-level">評鑑</div>
+      </div>
+      <div class="dq-body">
+        <div class="dq-hint">💡 參考全班數據表（教師投影），找出各組數值的範圍，思考「變異的來源」。</div>
+        <div class="dq-lines">
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dq-item">
+      <div class="dq-head">
+        <div class="dq-num">5</div>
+        <div class="dq-q">延伸應用：若城市規劃師想選擇「能有效降低熱島效應」的行道樹，應優先選氣孔密度高或低的植物？請說明你的科學理由，並提出1個你想進一步探究的問題。</div>
+        <div class="dq-level">創造／評鑑</div>
+      </div>
+      <div class="dq-body">
+        <div class="dq-hint">💡 提示：氣孔蒸散作用與蒸發散熱的關係→城市降溫效益→但同時需考慮耗水量。</div>
+        <div class="dq-lines">
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+          <div class="dq-line"></div>
+        </div>
+        <div style="margin-top:12px;padding:10px 12px;background:rgba(74,140,92,.07);border-radius:4px;font-size:13px">
+          <strong style="color:var(--moss)">★ 延伸探究問題（我想繼續研究的是……）</strong>
+          <div class="dq-lines" style="margin-top:6px">
+            <div class="dq-line"></div>
+            <div class="dq-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════════════
+         PART E：AI 工具使用反思
+    ════════════════════════════════ -->
+    <div class="sec-head">
+      <div class="sec-icon">E</div>
+      <div class="sec-title">AI 工具使用反思</div>
+      <div class="sec-badge">智識增強（IA）</div>
+    </div>
+
+    <div class="callout callout-green" style="margin-bottom:16px">
+      <strong>📌 本區段目的：</strong>
+      本實驗中我們嘗試用AI工具輔助探究。請誠實填寫你的AI使用紀錄與反思——沒有標準答案，重要的是你對AI能力與限制的思考。
+    </div>
+
+    <div class="ai-ref-card">
+      <div class="ai-ref-head">
+        <div class="ai-ref-phase">步驟一<br>查詢背景知識</div>
+        <div class="ai-ref-q">你使用了什麼AI工具查詢氣孔相關知識？AI給你的回答中，哪些內容幫助你建立假說？哪些你需要再判斷或核實？</div>
+      </div>
+      <div class="ai-ref-body">
+        <span class="ai-tool-tag">Perplexity AI</span>
+        <span class="ai-tool-tag">ChatGPT</span>
+        <span class="ai-tool-tag">Claude</span>
+        <span class="ai-tool-tag">其他：_________</span>
+        <p style="font-size:12px;color:var(--muted);margin:6px 0 4px">你查詢了什麼問題？（請寫出你的提示詞）</p>
+        <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+        <p style="font-size:12px;color:var(--muted);margin:10px 0 4px">AI的回答讓你覺得最有用的部分是？</p>
+        <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+        <p style="font-size:12px;color:var(--muted);margin:10px 0 4px">你對AI的回答有疑問或需要驗證的部分是？</p>
+        <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+      </div>
+    </div>
+
+    <div class="ai-ref-card">
+      <div class="ai-ref-head">
+        <div class="ai-ref-phase">步驟二<br>AI輔助計數</div>
+        <div class="ai-ref-q">如果你使用了AI（如Julius AI）協助計數氣孔，比較AI計數與你人工計數的結果——AI在哪些情況下準確？哪些情況下出錯了？</div>
+      </div>
+      <div class="ai-ref-body">
+        <span class="ai-tool-tag">Julius AI</span>
+        <span class="ai-tool-tag">ImageJ</span>
+        <span class="ai-tool-tag">未使用 □</span>
+        <table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:13px">
+          <thead>
+            <tr>
+              <th style="background:var(--forest);color:var(--mint);padding:7px 10px;font-size:11px;border:1px solid var(--border)">視野</th>
+              <th style="background:var(--forest);color:var(--mint);padding:7px 10px;font-size:11px;border:1px solid var(--border)">人工計數</th>
+              <th style="background:var(--forest);color:var(--mint);padding:7px 10px;font-size:11px;border:1px solid var(--border)">AI計數</th>
+              <th style="background:var(--forest);color:var(--mint);padding:7px 10px;font-size:11px;border:1px solid var(--border)">差異</th>
+              <th style="background:var(--forest);color:var(--mint);padding:7px 10px;font-size:11px;border:1px solid var(--border)">可能原因</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:7px 10px;border:1px solid var(--border);color:var(--muted);font-size:12px">視野1</td><td style="padding:7px 10px;border:1px solid var(--border)"></td><td style="padding:7px 10px;border:1px solid var(--border)"></td><td style="padding:7px 10px;border:1px solid var(--border)"></td><td style="padding:7px 10px;border:1px solid var(--border)"></td></tr>
+            <tr><td style="padding:7px 10px;border:1px solid var(--border);color:var(--muted);font-size:12px">視野2</td><td style="padding:7px 10px;border:1px solid var(--border)"></td><td style="padding:7px 10px;border:1px solid var(--border)"></td><td style="padding:7px 10px;border:1px solid var(--border)"></td><td style="padding:7px 10px;border:1px solid var(--border)"></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:var(--muted);margin:12px 0 4px">你認為AI計數在什麼情況下最可靠？什麼情況下最不可靠？</p>
+        <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+      </div>
+    </div>
+
+    <div class="ai-ref-card">
+      <div class="ai-ref-head">
+        <div class="ai-ref-phase">步驟三<br>AI輔助寫作</div>
+        <div class="ai-ref-q">請將你的討論段落草稿輸入AI進行潤飾。完成後，比較「草稿」與「AI修訂版」，並說明你保留了哪些、修改了哪些。</div>
+      </div>
+      <div class="ai-ref-body">
+        <span class="ai-tool-tag">Claude</span>
+        <span class="ai-tool-tag">ChatGPT</span>
+        <span class="ai-tool-tag">未使用 □</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+          <div>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700">✍️ 我的原始草稿（關鍵句）：</p>
+            <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+          </div>
+          <div>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700">🤖 AI修訂後的版本（關鍵句）：</p>
+            <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin:12px 0 4px">你保留了AI的哪些修改？為什麼？你拒絕了哪些修改？理由是？</p>
+        <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+        <p style="font-size:12px;color:var(--muted);margin:10px 0 4px">這次使用AI輔助寫作的經驗，讓你對「AI輔助 vs. AI代寫」的界線有什麼新的想法？</p>
+        <div class="ai-ref-lines"><div class="ai-ref-line"></div><div class="ai-ref-line"></div></div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════════════
+         結論摘要 + 自我評估
+    ════════════════════════════════ -->
+    <div class="sec-head">
+      <div class="sec-icon">✦</div>
+      <div class="sec-title">研究結論摘要</div>
+      <div class="sec-badge">表達與分享</div>
+    </div>
+
+    <div class="conclusion-form">
+      <div class="conc-head">📄 本次探究結論（請用完整句子填寫，為課後小報告打底）</div>
+      <div class="conc-body">
+        <div class="conc-field">
+          <label>【研究問題】</label>
+          <div class="cline"></div>
+        </div>
+        <div class="conc-field">
+          <label>【數據結果摘要】陽地植物氣孔密度：______ 個/mm²；陰地植物：______ 個/mm²；差異：______ 倍</label>
+        </div>
+        <div class="conc-field">
+          <label>【結論】（數據是否支持假說？）</label>
+          <div class="cline"></div>
+          <div class="cline"></div>
+          <div class="cline"></div>
+        </div>
+        <div class="conc-field">
+          <label>【最主要的研究限制】</label>
+          <div class="cline"></div>
+          <div class="cline"></div>
+        </div>
+        <div class="conc-field">
+          <label>【下一步想探究的問題】</label>
+          <div class="cline"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自我評估 -->
+    <p style="font-size:14px;font-weight:700;color:var(--forest);margin:24px 0 10px">
+      ⭐ 自我評估（每個向度給自己打1~5顆星）
+    </p>
+    <table class="self-eval-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;width:55%">評估向度</th>
+          <th>自評</th>
+          <th style="text-align:left">給自己的一句話</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>假說寫得清楚、可被驗證</td>
+          <td>
+            <div class="star-row">
+              <span class="star" onclick="rateStar(this,1)">★</span>
+              <span class="star" onclick="rateStar(this,2)">★</span>
+              <span class="star" onclick="rateStar(this,3)">★</span>
+              <span class="star" onclick="rateStar(this,4)">★</span>
+              <span class="star" onclick="rateStar(this,5)">★</span>
+            </div>
+          </td>
+          <td><div style="border-bottom:1px solid #ccc;min-height:22px"></div></td>
+        </tr>
+        <tr>
+          <td>實驗操作精確、數據記錄完整</td>
+          <td>
+            <div class="star-row">
+              <span class="star" onclick="rateStar(this,1)">★</span>
+              <span class="star" onclick="rateStar(this,2)">★</span>
+              <span class="star" onclick="rateStar(this,3)">★</span>
+              <span class="star" onclick="rateStar(this,4)">★</span>
+              <span class="star" onclick="rateStar(this,5)">★</span>
+            </div>
+          </td>
+          <td><div style="border-bottom:1px solid #ccc;min-height:22px"></div></td>
+        </tr>
+        <tr>
+          <td>結論有數據支撐、論述合理</td>
+          <td>
+            <div class="star-row">
+              <span class="star" onclick="rateStar(this,1)">★</span>
+              <span class="star" onclick="rateStar(this,2)">★</span>
+              <span class="star" onclick="rateStar(this,3)">★</span>
+              <span class="star" onclick="rateStar(this,4)">★</span>
+              <span class="star" onclick="rateStar(this,5)">★</span>
+            </div>
+          </td>
+          <td><div style="border-bottom:1px solid #ccc;min-height:22px"></div></td>
+        </tr>
+        <tr>
+          <td>對AI工具有批判性反思</td>
+          <td>
+            <div class="star-row">
+              <span class="star" onclick="rateStar(this,1)">★</span>
+              <span class="star" onclick="rateStar(this,2)">★</span>
+              <span class="star" onclick="rateStar(this,3)">★</span>
+              <span class="star" onclick="rateStar(this,4)">★</span>
+              <span class="star" onclick="rateStar(this,5)">★</span>
+            </div>
+          </td>
+          <td><div style="border-bottom:1px solid #ccc;min-height:22px"></div></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div style="margin-top:40px;padding-top:16px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--muted)">
+      臺北市立麗山高中 ｜ 自然科學探究與實作 ｜ 108 課綱 ｜ 高一<br>
+      本學習單共 5 大區塊：A 假說設計 ｜ B 操作記錄 ｜ C 數據圖表 ｜ D 討論反思 ｜ E AI工具反思
+    </div>
+
+  </div><!-- end .ws-body -->
+</div><!-- end .page -->
+
+<script>
+// 步驟打勾
+function toggleCheck(el) {
+  el.classList.toggle('done');
+}
+
+// 星星評分
+function rateStar(clickedStar, level) {
+  const row = clickedStar.closest('.star-row');
+  const stars = row.querySelectorAll('.star');
+  stars.forEach((s, i) => {
+    s.classList.toggle('lit', i < level);
+  });
+}
+</script>
+</body>
+</html>

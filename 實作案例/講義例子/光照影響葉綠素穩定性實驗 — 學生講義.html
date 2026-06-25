@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光照影響葉綠素穩定性實驗 — 學生講義</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --green-dark: #1a4a2e;
+    --green-mid: #2d7a4f;
+    --green-light: #4aab72;
+    --green-pale: #e8f5ee;
+    --green-tint: #f4fbf7;
+    --amber: #c97d1a;
+    --amber-pale: #fdf3e0;
+    --red: #b83232;
+    --red-pale: #fdeaea;
+    --gray-dark: #2c2c2c;
+    --gray-mid: #555;
+    --gray-light: #888;
+    --gray-border: #ddd;
+    --gray-bg: #f8f8f6;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @media screen {
+    body {
+      background: #e8e8e4;
+      display: flex;
+      justify-content: center;
+      padding: 24px;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .page {
+      background: var(--white);
+      width: 794px;
+      min-height: 1123px;
+      padding: 48px 52px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+      position: relative;
+    }
+  }
+
+  @media print {
+    body { background: white; margin: 0; padding: 0; }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 15mm 18mm;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+    .no-print { display: none !important; }
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border-bottom: 3px solid var(--green-dark);
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+  }
+  .header-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--green-dark);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-icon svg { width: 30px; height: 30px; fill: white; }
+  .header-text h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green-dark);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--gray-light);
+  }
+  .header-meta span { display: flex; align-items: center; gap: 4px; }
+
+  /* ── Info bar ── */
+  .info-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-border);
+    border: 1px solid var(--gray-border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 22px;
+    font-size: 11px;
+  }
+  .info-cell {
+    background: var(--white);
+    padding: 8px 12px;
+  }
+  .info-cell label {
+    display: block;
+    color: var(--gray-light);
+    margin-bottom: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .info-cell input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px dashed var(--gray-border);
+    outline: none;
+    font-size: 12px;
+    color: var(--gray-dark);
+    background: transparent;
+    font-family: 'Noto Sans TC', sans-serif;
+    padding-bottom: 2px;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 20px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .section-num {
+    width: 26px;
+    height: 26px;
+    background: var(--green-dark);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green-dark);
+    font-family: 'Noto Serif TC', serif;
+  }
+  .section-sub {
+    font-size: 10.5px;
+    color: var(--gray-light);
+    margin-left: auto;
+  }
+
+  /* ── Materials ── */
+  .materials-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .mat-group {
+    background: var(--green-tint);
+    border: 1px solid #c8e8d4;
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .mat-group h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green-mid);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .mat-group ul { list-style: none; }
+  .mat-group ul li {
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    padding: 2px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    line-height: 1.5;
+  }
+  .mat-group ul li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--green-light);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* ── Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 7px; }
+  .step {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .step-n {
+    width: 20px;
+    height: 20px;
+    background: var(--green-mid);
+    color: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-text {
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    line-height: 1.6;
+    flex: 1;
+  }
+  .step-text strong { color: var(--green-dark); }
+  .tip-inline {
+    display: inline-block;
+    background: var(--amber-pale);
+    color: var(--amber);
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
+  /* ── Warning boxes ── */
+  .callout {
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 11px;
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .callout-amber { background: var(--amber-pale); border-left: 3px solid var(--amber); }
+  .callout-red { background: var(--red-pale); border-left: 3px solid var(--red); }
+  .callout-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .callout p { color: var(--gray-dark); }
+  .callout strong { color: var(--amber); }
+  .callout-red strong { color: var(--red); }
+
+  /* ── Standardization checklist ── */
+  .checklist { display: flex; flex-direction: column; gap: 5px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 11.5px;
+    color: var(--gray-dark);
+    line-height: 1.6;
+  }
+  .check-box {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--green-mid);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Data table ── */
+  .data-table-wrap { overflow-x: auto; }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  table.data-table th {
+    background: var(--green-dark);
+    color: white;
+    padding: 7px 10px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+    border: 1px solid var(--green-dark);
+  }
+  table.data-table td {
+    border: 1px solid var(--gray-border);
+    padding: 6px 8px;
+    text-align: center;
+    color: var(--gray-mid);
+    font-size: 11px;
+    height: 28px;
+  }
+  table.data-table tr:nth-child(even) td { background: var(--green-tint); }
+  table.data-table .group-label {
+    background: var(--green-pale);
+    font-weight: 700;
+    color: var(--green-dark);
+    font-size: 10.5px;
+    text-align: left;
+    padding-left: 12px;
+  }
+  table.data-table .rgb-r { color: #c0392b; font-weight: 500; }
+  table.data-table .rgb-g { color: #27ae60; font-weight: 500; }
+  table.data-table .rgb-b { color: #2980b9; font-weight: 500; }
+
+  /* ── Troubleshoot table ── */
+  table.trouble-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  table.trouble-table th {
+    padding: 7px 10px;
+    font-weight: 700;
+    font-size: 10.5px;
+    background: var(--gray-bg);
+    color: var(--gray-dark);
+    border-bottom: 2px solid var(--gray-border);
+    text-align: left;
+  }
+  table.trouble-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gray-border);
+    vertical-align: top;
+    line-height: 1.55;
+    color: var(--gray-dark);
+  }
+  table.trouble-table .fail { color: var(--red); font-weight: 500; }
+  table.trouble-table .fix { color: var(--green-mid); }
+  table.trouble-table tr:last-child td { border-bottom: none; }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--gray-border);
+    margin: 18px 0;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: var(--gray-light);
+  }
+
+  /* ── Page 2 marker ── */
+  .page-break { page-break-before: always; }
+
+  /* Print button */
+  .print-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green-dark);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .print-btn:hover { background: var(--green-mid); }
+</style>
+</head>
+<body>
+
+<!-- ══════ PAGE 1 ══════ -->
+<div class="page">
+
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2 0-2 6-3 6-3H7C5 3 3 5 3 7v4c0 2 2 3 2 3 0-3 4-6 12-6z"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>光照影響葉綠素穩定性實驗<br>學生操作講義</h1>
+      <div class="header-meta">
+        <span>◎ 探究與實作</span>
+        <span>◎ 光合作用單元</span>
+        <span>◎ 使用顏色探測 APP（Colorimeter）</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基本資料 -->
+  <div class="info-bar">
+    <div class="info-cell">
+      <label>班級 / 組別</label>
+      <input type="text" placeholder="例：302 / 第3組">
+    </div>
+    <div class="info-cell">
+      <label>姓名</label>
+      <input type="text" placeholder="">
+    </div>
+    <div class="info-cell">
+      <label>實驗日期</label>
+      <input type="text" placeholder="　　年　　月　　日">
+    </div>
+  </div>
+
+  <!-- SECTION 1: 材料 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">實驗材料清單</div>
+      <div class="section-sub">菠菜葉萃取葉綠體（最簡易法）</div>
+    </div>
+    <div class="materials-grid">
+      <div class="mat-group">
+        <h4>生物材料</h4>
+        <ul>
+          <li>新鮮菠菜葉（去除葉脈）約 10 g</li>
+          <li>蒸餾水 100 mL</li>
+          <li>研磨緩衝液（0.4 M 蔗糖 + 10 mM PBS, pH 7.2）</li>
+        </ul>
+      </div>
+      <div class="mat-group">
+        <h4>器材（每組）</h4>
+        <ul>
+          <li>研缽與研棒（或果汁機）</li>
+          <li>紗布或濾紙 × 2 張</li>
+          <li>離心管 4 mL × 4 支</li>
+          <li>錫箔紙（遮光用）</li>
+        </ul>
+      </div>
+      <div class="mat-group">
+        <h4>光照設備</h4>
+        <ul>
+          <li>LED 白光燈（≥ 3000 lux）或窗邊自然光</li>
+          <li>遮光箱（紙箱加黑色垃圾袋）</li>
+          <li>計時器</li>
+        </ul>
+      </div>
+      <div class="mat-group">
+        <h4>測量工具</h4>
+        <ul>
+          <li>手機 × 每組1支（安裝顏色 APP）</li>
+          <li>白色背景卡（A4 白紙折疊）</li>
+          <li>1.5 mL 透明微量離心管 × 8 支</li>
+          <li>微量吸管或滴管</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout-amber" style="margin-top:10px;">
+      <div class="callout-icon">★</div>
+      <p><strong>菠菜萃取步驟（5分鐘快速法）：</strong>取 5 g 去葉脈菠菜，加入 20 mL 冷緩衝液，於研缽中充分研磨 3 分鐘，以雙層紗布過濾去除細胞碎片，所得綠色濾液即為葉綠體萃取液，置於冰浴中備用。<strong>全程低溫操作，避免酵素失活。</strong></p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 2: 標準化步驟 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">顏色 APP 測量標準化步驟</div>
+      <div class="section-sub">避免光源與背景造成誤差</div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">①</div>
+        <div class="step-text"><strong>固定背景：</strong>每次測量前，將樣品試管置於<strong>同一張白色背景卡</strong>正上方，背景卡緊貼試管底部，確保 APP 捕捉到的背景顏色一致。</div>
+      </div>
+      <div class="step">
+        <div class="step-n">②</div>
+        <div class="step-text"><strong>統一光源：</strong>測量時關閉教室日光燈，僅使用<strong>單一 LED 補光燈</strong>從正側方 30° 照射（或全組至窗邊自然光下，避免遮影）。<span class="tip-inline">關鍵</span></div>
+      </div>
+      <div class="step">
+        <div class="step-n">③</div>
+        <div class="step-text"><strong>固定距離：</strong>手機鏡頭距試管表面<strong>固定 5 cm</strong>，可用厚度一致的書本作為墊高工具，每次測量均需確認距離。</div>
+      </div>
+      <div class="step">
+        <div class="step-n">④</div>
+        <div class="step-text"><strong>取樣方式：</strong>APP 取色框對準試管中段液體最厚處，<strong>避開試管壁反光區域</strong>。每個樣品連續測量 <strong>3 次取平均值</strong>後記錄。</div>
+      </div>
+      <div class="step">
+        <div class="step-n">⑤</div>
+        <div class="step-text"><strong>時間記錄：</strong>每次測量均需記錄<strong>精確時間（時:分）</strong>，光照組與對照組應在<strong>同一分鐘內完成</strong>配對測量。</div>
+      </div>
+      <div class="step">
+        <div class="step-n">⑥</div>
+        <div class="step-text"><strong>校正零點：</strong>實驗開始前，用裝有<strong>純緩衝液（不含葉綠體）</strong>的試管測一次 RGB，記錄為背景基準值，後續數值解讀需扣除此基準。</div>
+      </div>
+    </div>
+
+    <div class="checklist" style="margin-top:10px;background:var(--green-tint);border:1px solid #c8e8d4;border-radius:6px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--green-dark);margin-bottom:6px;">測量前自我檢查清單</div>
+      <div class="check-item"><div class="check-box"></div><span>背景白卡已放置於試管正下方</span></div>
+      <div class="check-item"><div class="check-box"></div><span>光源方向與上次相同（側光 30°）</span></div>
+      <div class="check-item"><div class="check-box"></div><span>鏡頭距試管 5 cm（已用書本固定）</span></div>
+      <div class="check-item"><div class="check-box"></div><span>APP 取色框對準液體中段，無反光</span></div>
+      <div class="check-item"><div class="check-box"></div><span>已完成 3 次重複測量並記錄平均</span></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>麗山高中生物科 探究與實作講義</span>
+    <span>第 1 頁，共 2 頁</span>
+  </div>
+</div>
+
+
+<!-- ══════ PAGE 2 ══════ -->
+<div class="page page-break">
+
+  <!-- SECTION 3: 記錄表 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">數據記錄表</div>
+      <div class="section-sub">每格填入 3 次測量平均值</div>
+    </div>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:14%">組別</th>
+            <th rowspan="2" style="width:10%">時間點</th>
+            <th rowspan="2" style="width:12%">測量時刻</th>
+            <th colspan="3" style="background:#2d4a3e;">RGB 數值（3次平均）</th>
+            <th rowspan="2" style="width:8%">ΔR</th>
+            <th rowspan="2" style="width:8%">ΔG</th>
+            <th rowspan="2" style="width:8%">ΔB</th>
+            <th rowspan="2" style="width:14%">備注</th>
+          </tr>
+          <tr>
+            <th style="background:#7a1f1f; width:8%;">R</th>
+            <th style="background:#1f5e2e; width:8%;">G</th>
+            <th style="background:#1a3a6e; width:8%;">B</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="group-label" rowspan="3">A 組<br><span style="font-size:9.5px;font-weight:400;color:var(--gray-mid)">光照+葉綠體</span></td>
+            <td>實驗前</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td>—</td><td>—</td><td>—</td><td></td>
+          </tr>
+          <tr>
+            <td>30 分後</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>60 分後</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="group-label" rowspan="3">B 組<br><span style="font-size:9.5px;font-weight:400;color:var(--gray-mid)">光照+煮沸液</span></td>
+            <td>實驗前</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td>—</td><td>—</td><td>—</td><td></td>
+          </tr>
+          <tr>
+            <td>30 分後</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>60 分後</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="group-label" rowspan="3">C 組<br><span style="font-size:9.5px;font-weight:400;color:var(--gray-mid)">黑暗+葉綠體</span></td>
+            <td>實驗前</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td>—</td><td>—</td><td>—</td><td></td>
+          </tr>
+          <tr>
+            <td>30 分後</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>60 分後</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td class="group-label">背景基準<br><span style="font-size:9.5px;font-weight:400;color:var(--gray-mid)">純緩衝液</span></td>
+            <td>實驗前</td><td></td>
+            <td class="rgb-r"></td><td class="rgb-g"></td><td class="rgb-b"></td>
+            <td colspan="4" style="font-size:10px;color:var(--gray-light);text-align:left;padding-left:10px;">扣除背景用（計算時從各組數值中減去）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:8px;font-size:10.5px;color:var(--gray-light);">
+      ΔR = 該時間點 R 值 − 實驗前 R 值（其餘同理）；正值代表顏色向紅/綠/藍偏移，負值代表減少。
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 4: 失敗分析 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">常見失敗原因與預防措施</div>
+    </div>
+
+    <table class="trouble-table">
+      <thead>
+        <tr>
+          <th style="width:5%">#</th>
+          <th style="width:28%">失敗現象</th>
+          <th style="width:30%">原因診斷</th>
+          <th style="width:37%">預防措施</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:center;font-weight:700;color:var(--red);">1</td>
+          <td class="fail">萃取液顏色太淡（G值<80），無法明顯分辨各組差異</td>
+          <td>葉綠體未充分破碎，或菠菜葉量不足；夏季菠菜葉綠素含量也較低</td>
+          <td class="fix">改用研磨時間≥5分鐘；增加葉片用量至15g；或改用羽衣甘藍（葉綠素含量更高）</td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-weight:700;color:var(--red);">2</td>
+          <td class="fail">各組實驗前 RGB 值差異>10，代表初始液不均一</td>
+          <td>萃取液未充分混勻即分裝；葉綠體沉降導致各管濃度不同</td>
+          <td class="fix">分裝前反覆輕輕倒轉混勻；縮短分裝時間；分裝後立即測初始值</td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-weight:700;color:var(--red);">3</td>
+          <td class="fail">黑暗組 RGB 也明顯變化（C組ΔR>10）</td>
+          <td>遮光不完全（錫箔縫隙透光）；或室溫過高導致酵素熱變性</td>
+          <td class="fix">以雙層黑色塑膠袋包裹試管；確認操作溫度≤25°C；測量時再次確認遮光</td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-weight:700;color:var(--red);">4</td>
+          <td class="fail">同組不同時間點 RGB 波動>±5（測量不穩定）</td>
+          <td>手機未固定、光源角度改變、APP取色框位置不一致</td>
+          <td class="fix">製作「測量夾具」：紙盒開孔固定手機距離與角度；每次測量由同一位同學操作</td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-weight:700;color:var(--red);">5</td>
+          <td class="fail">光照組60分鐘後 R 值上升，但各組間差距不夠顯著</td>
+          <td>光源強度不足（<1000 lux）；或實驗時間過短</td>
+          <td class="fix">使用手機燈光 APP 確認光源強度≥3000 lux；延長光照時間至90分鐘；光源距試管縮短至10cm</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 討論問題 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">討論問題（課後填寫）</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:11.5px;color:var(--gray-dark);">
+        <strong style="color:var(--green-dark);">Q1.</strong> 光照組 R 值上升最多，這在色彩學上代表顏色向哪個方向偏移？對應的葉綠素降解產物為何？
+        <div style="margin-top:6px;border-bottom:1px dashed var(--gray-border);height:18px;"></div>
+        <div style="margin-top:4px;border-bottom:1px dashed var(--gray-border);height:18px;"></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--gray-dark);">
+        <strong style="color:var(--green-dark);">Q2.</strong> 若在光照組中加入抗氧化劑（如維生素 C），預測 RGB 變化量會如何改變？說明理由。
+        <div style="margin-top:6px;border-bottom:1px dashed var(--gray-border);height:18px;"></div>
+        <div style="margin-top:4px;border-bottom:1px dashed var(--gray-border);height:18px;"></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--gray-dark);">
+        <strong style="color:var(--green-dark);">Q3.</strong> 本實驗使用 RGB 而非分光光度計，這種測量方法有何優點與限制？
+        <div style="margin-top:6px;border-bottom:1px dashed var(--gray-border);height:18px;"></div>
+        <div style="margin-top:4px;border-bottom:1px dashed var(--gray-border);height:18px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>麗山高中生物科 探究與實作講義</span>
+    <span>第 2 頁，共 2 頁</span>
+  </div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">列印 / 存為 PDF</button>
+
+</body>
+</html>

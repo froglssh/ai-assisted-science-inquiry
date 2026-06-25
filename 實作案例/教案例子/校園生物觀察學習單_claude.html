@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校園生物觀察學習單</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --forest: #2d5a27;
+    --moss: #4a7c3f;
+    --leaf: #6aa84f;
+    --sage: #93c47d;
+    --mist: #d9ead3;
+    --cream: #fafdf8;
+    --soil: #7b5c3a;
+    --stone: #5a5a5a;
+    --ink: #1a1a1a;
+    --border: #b7d4ae;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: #f0f4ee;
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 12px auto;
+    background: var(--cream);
+    padding: 14mm 16mm 14mm 16mm;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(45,90,39,0.10);
+  }
+
+  /* ── 左側裝飾邊條 ── */
+  .page::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 7px;
+    background: linear-gradient(180deg, var(--forest) 0%, var(--moss) 40%, var(--leaf) 75%, var(--sage) 100%);
+    border-radius: 0 0 0 0;
+  }
+
+  /* ══════════════ HEADER ══════════════ */
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--forest);
+    margin-bottom: 12px;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--forest);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+  }
+
+  .header-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.3;
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+    color: var(--stone);
+    margin-top: 3px;
+  }
+
+  .info-box {
+    background: var(--mist);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 160px;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: var(--stone);
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .info-label { font-weight: 700; color: var(--forest); white-space: nowrap; }
+  .info-line {
+    flex: 1;
+    border-bottom: 1px solid var(--border);
+    min-width: 60px;
+    height: 16px;
+  }
+
+  /* ══════════════ SECTION HEADERS ══════════════ */
+  .section {
+    margin-bottom: 13px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .step-badge {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: #fff;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-badge.moss { background: var(--moss); }
+  .step-badge.leaf { background: var(--leaf); }
+  .step-badge.sage { background: var(--sage); color: var(--forest); }
+  .step-badge.soil { background: var(--soil); }
+  .step-badge.stone { background: var(--stone); }
+  .step-badge.dark { background: #1a3a17; }
+
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--forest);
+  }
+
+  .section-tag {
+    font-size: 9px;
+    background: var(--mist);
+    border: 1px solid var(--border);
+    color: var(--moss);
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-left: auto;
+  }
+
+  /* ══════════════ CONTENT BLOCKS ══════════════ */
+  .hint-box {
+    background: linear-gradient(135deg, #f0f7ee 0%, #e8f5e3 100%);
+    border-left: 3px solid var(--leaf);
+    border-radius: 0 6px 6px 0;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--stone);
+    margin-bottom: 7px;
+    font-style: italic;
+  }
+
+  .hint-box strong { color: var(--forest); font-style: normal; }
+
+  .write-area {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    width: 100%;
+  }
+
+  .write-lines {
+    width: 100%;
+  }
+
+  .write-line {
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    height: 22px;
+    width: 100%;
+    margin-bottom: 1px;
+    display: block;
+  }
+
+  .hypothesis-frame {
+    background: #fff;
+    border: 1.5px solid var(--moss);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .hypothesis-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .hypothesis-row:last-child { margin-bottom: 0; }
+
+  .hypothesis-keyword {
+    background: var(--forest);
+    color: #fff;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .hypothesis-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    min-height: 20px;
+  }
+
+  /* 變因表格 */
+  .variable-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    margin-bottom: 2px;
+  }
+
+  .variable-table th {
+    background: var(--forest);
+    color: #fff;
+    padding: 5px 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  .variable-table td {
+    border: 1px solid var(--border);
+    padding: 5px 8px;
+    vertical-align: top;
+    background: #fff;
+  }
+
+  .variable-table td:first-child {
+    background: var(--mist);
+    font-weight: 700;
+    color: var(--forest);
+    text-align: center;
+    width: 22%;
+    white-space: nowrap;
+  }
+
+  .variable-table .def {
+    font-size: 10px;
+    color: var(--stone);
+    font-weight: 400;
+    display: block;
+    margin-top: 1px;
+  }
+
+  .write-box {
+    min-height: 18px;
+    border-bottom: 1px dashed var(--border);
+    width: 100%;
+    margin-top: 3px;
+  }
+
+  /* 記錄表 */
+  .record-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+
+  .record-table th {
+    background: var(--moss);
+    color: #fff;
+    padding: 5px 6px;
+    text-align: center;
+    font-weight: 700;
+    border: 1px solid var(--border);
+  }
+
+  .record-table td {
+    border: 1px solid var(--border);
+    padding: 4px 6px;
+    text-align: center;
+    background: #fff;
+    height: 24px;
+  }
+
+  .record-table td.label {
+    background: var(--mist);
+    font-weight: 700;
+    color: var(--forest);
+    text-align: left;
+    padding-left: 8px;
+  }
+
+  /* 圖表區 */
+  .chart-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .chart-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  .chart-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .chart-grid {
+    width: 100%;
+    height: 90px;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 17px, #e8f0e4 17px, #e8f0e4 18px),
+      repeating-linear-gradient(90deg, transparent, transparent 17px, #e8f0e4 17px, #e8f0e4 18px);
+    border-left: 2px solid var(--stone);
+    border-bottom: 2px solid var(--stone);
+    position: relative;
+  }
+
+  .axis-label {
+    font-size: 9px;
+    color: var(--stone);
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  /* 論證區 */
+  .argument-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 7px;
+  }
+
+  .argument-prompt {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--moss);
+    margin-bottom: 4px;
+  }
+
+  /* 反思區 */
+  .reflection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .reflection-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 9px;
+  }
+
+  .reflection-card-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--leaf);
+    flex-shrink: 0;
+  }
+
+  /* IMRD 快速參照 */
+  .imrd-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .imrd-cell {
+    border-radius: 5px;
+    padding: 5px 7px;
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .imrd-cell .letter {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 700;
+    display: block;
+    line-height: 1.1;
+  }
+
+  .imrd-cell .zh { font-size: 9px; display: block; margin-top: 1px; }
+  .imrd-cell .q { font-size: 8.5px; color: #555; margin-top: 3px; display: block; line-height: 1.3; }
+
+  .imrd-I { background: #dce8d9; color: #2d5a27; }
+  .imrd-M { background: #d4e3f7; color: #1a4a7a; }
+  .imrd-R { background: #fef3d0; color: #7a4f00; }
+  .imrd-D { background: #fde8e8; color: #7a1a1a; }
+
+  /* IMRD 撰寫區 */
+  .imrd-write-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .imrd-write-box {
+    border-radius: 6px;
+    padding: 7px 9px;
+    border: 1.5px solid;
+  }
+
+  .imrd-write-box.I { border-color: #93c47d; background: #f4faf2; }
+  .imrd-write-box.M { border-color: #6fa8dc; background: #f0f6fd; }
+  .imrd-write-box.R { border-color: #f6b26b; background: #fffbf0; }
+  .imrd-write-box.D { border-color: #e06666; background: #fff5f5; }
+
+  .imrd-write-title {
+    font-size: 10px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .imrd-write-box.I .imrd-write-title { color: #2d5a27; }
+  .imrd-write-box.M .imrd-write-title { color: #1a4a7a; }
+  .imrd-write-box.R .imrd-write-title { color: #7a4f00; }
+  .imrd-write-box.D .imrd-write-title { color: #7a1a1a; }
+
+  /* 分隔線 */
+  .divider {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 10px 0;
+  }
+
+  /* 頁尾 */
+  .footer {
+    margin-top: 10px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: #aaa;
+  }
+
+  .footer-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .leaf-icon { color: var(--leaf); font-size: 11px; }
+
+  /* 自評量表 */
+  .self-eval {
+    background: var(--mist);
+    border-radius: 6px;
+    padding: 7px 10px;
+    margin-bottom: 2px;
+  }
+
+  .self-eval-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 5px;
+  }
+
+  .eval-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .eval-label { flex: 1; color: var(--stone); }
+
+  .stars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .star {
+    width: 14px; height: 14px;
+    border: 1px solid var(--leaf);
+    border-radius: 2px;
+    background: #fff;
+  }
+
+  /* 警示框 */
+  .ethics-box {
+    background: #fff8e6;
+    border: 1px solid #f6b26b;
+    border-left: 4px solid #e69138;
+    border-radius: 0 6px 6px 0;
+    padding: 6px 10px;
+    font-size: 10.5px;
+    color: #7a4f00;
+    margin-bottom: 8px;
+  }
+
+  .ethics-box strong { color: #b45309; }
+
+  /* 小提示 */
+  .tip-inline {
+    font-size: 9.5px;
+    color: #888;
+    font-style: italic;
+    margin-left: 4px;
+  }
+
+  /* 組別標記 */
+  .group-tag {
+    display: inline-block;
+    background: var(--forest);
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-right: 4px;
+  }
+
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .page { box-shadow: none; margin: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div>
+      <div class="header-badge">🌿 自然科學探究與實作　高中必修</div>
+      <div class="header-title">校園生物觀察學習單</div>
+      <div class="header-subtitle">誰住在這裡？——非生物因子如何影響校園生物分布？</div>
+    </div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-label">姓名</span><span class="info-line"></span></div>
+      <div class="info-row"><span class="info-label">班級</span><span class="info-line"></span></div>
+      <div class="info-row"><span class="info-label">組別</span><span class="info-line"></span></div>
+      <div class="info-row"><span class="info-label">日期</span><span class="info-line"></span></div>
+    </div>
+  </div>
+
+  <!-- ══ ETHICS ══ -->
+  <div class="ethics-box">
+    ⚠️ <strong>倫理提醒：</strong>本活動為非侵入性觀察，只目測記錄、不捕捉任何動物。脊椎動物依《動物保護法》嚴禁干擾；無脊椎動物觀察後請讓其回到原處，展現對生命的尊重。
+  </div>
+
+  <!-- ══ STEP 1：觀察與描述 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge">1</div>
+      <div class="section-title">觀察與描述——你看到了什麼？</div>
+      <span class="section-tag">po-Ⅴc-1 ｜ ai-Ⅴc-1</span>
+    </div>
+    <div class="hint-box">
+      🔍 <strong>觀察原則：</strong>只描述你「眼睛看到的事實」，不要加入你的推測或解釋。好的科學觀察是客觀、具體、可重現的。
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div class="write-area">
+        <div style="font-size:10px;font-weight:700;color:var(--forest);margin-bottom:4px;">📍 樣區 A　位置：<span style="border-bottom:1px dashed var(--border);display:inline-block;width:80px;"></span></div>
+        <div style="font-size:10.5px;color:var(--stone);margin-bottom:3px;">地點描述（光線、地面材質、植被）：</div>
+        <div class="write-line"></div><div class="write-line"></div>
+        <div style="font-size:10.5px;color:var(--stone);margin:4px 0 3px;">觀察到的生物（盡量描述外觀特徵）：</div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="write-area">
+        <div style="font-size:10px;font-weight:700;color:var(--forest);margin-bottom:4px;">📍 樣區 B　位置：<span style="border-bottom:1px dashed var(--border);display:inline-block;width:80px;"></span></div>
+        <div style="font-size:10.5px;color:var(--stone);margin-bottom:3px;">地點描述（光線、地面材質、植被）：</div>
+        <div class="write-line"></div><div class="write-line"></div>
+        <div style="font-size:10.5px;color:var(--stone);margin:4px 0 3px;">觀察到的生物（盡量描述外觀特徵）：</div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+    </div>
+    <div style="margin-top:6px;" class="write-area">
+      <div style="font-size:10.5px;color:var(--stone);margin-bottom:3px;">🌱 比較兩個樣區，你注意到最明顯的「差異」是什麼？（只描述現象，不解釋原因）</div>
+      <div class="write-line"></div><div class="write-line"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ STEP 2：問題形成 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge moss">2</div>
+      <div class="section-title">問題形成——你可以提出什麼科學問題？</div>
+      <span class="section-tag">po-Ⅴc-2</span>
+    </div>
+    <div class="hint-box">
+      💡 <strong>可探究的問題</strong>必須能夠透過測量或觀察來回答，例如：「____ 是否會影響 ____？」而不是「為什麼生物要住在那裡？」
+    </div>
+    <div class="write-area">
+      <div style="font-size:10.5px;color:var(--stone);margin-bottom:4px;">根據你的觀察，寫下 1 個你想用這次調查來回答的科學問題：</div>
+      <div style="font-size:11.5px;color:var(--stone);padding:3px 0;">我的科學問題是：</div>
+      <div class="write-line"></div><div class="write-line"></div>
+      <div style="font-size:9.5px;color:#aaa;margin-top:3px;">（提示：問題中要包含你想測量的「原因」和「結果」，例如：「___的多少，是否影響___的種數？」）</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ STEP 3：假說提出 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge leaf">3</div>
+      <div class="section-title">假說提出——若…則…因為…</div>
+      <span class="section-tag">po-Ⅴc-2 ｜ ti-Ⅴc-1</span>
+    </div>
+    <div class="hint-box">
+      🧪 <strong>假說格式提醒：</strong>假說必須是「可驗證」的預測，要說明「方向」，並給出「科學機制」作為理由。三個部分缺一不可！
+    </div>
+    <div class="hypothesis-frame">
+      <div class="hypothesis-row">
+        <span class="hypothesis-keyword">若</span>
+        <div style="flex:1;">
+          <div style="font-size:9.5px;color:var(--stone);margin-bottom:2px;">（操縱變因，要具體且可測量）</div>
+          <div class="write-line"></div><div class="write-line"></div>
+        </div>
+      </div>
+      <div class="hypothesis-row">
+        <span class="hypothesis-keyword">則</span>
+        <div style="flex:1;">
+          <div style="font-size:9.5px;color:var(--stone);margin-bottom:2px;">（應變變因的預測結果，要說明方向：愈多／愈少？）</div>
+          <div class="write-line"></div><div class="write-line"></div>
+        </div>
+      </div>
+      <div class="hypothesis-row" style="margin-bottom:0;">
+        <span class="hypothesis-keyword">因為</span>
+        <div style="flex:1;">
+          <div style="font-size:9.5px;color:var(--stone);margin-bottom:2px;">（用你知道的生物學知識解釋這個預測的理由）</div>
+          <div class="write-line"></div><div class="write-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ STEP 4：變因辨別 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge sage">4</div>
+      <div class="section-title">變因辨別——誰動、誰看、誰不動？</div>
+      <span class="section-tag">pe-Ⅴc-1</span>
+    </div>
+    <table class="variable-table">
+      <thead>
+        <tr>
+          <th>變因類型</th>
+          <th>定義</th>
+          <th>本實驗中的具體內容（請填寫）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>操縱變因<span class="def">（你改變的條件）</span></td>
+          <td style="font-size:10.5px;">研究者刻意選擇、改變的自變量，是你想探討的「原因」</td>
+          <td><div class="write-box"></div><div class="write-box" style="margin-top:4px;"></div></td>
+        </tr>
+        <tr>
+          <td>應變變因<span class="def">（你量測的結果）</span></td>
+          <td style="font-size:10.5px;">因操縱變因改變而產生變化的結果，是你想觀察的「效應」</td>
+          <td><div class="write-box"></div><div class="write-box" style="margin-top:4px;"></div></td>
+        </tr>
+        <tr>
+          <td>控制變因<span class="def">（你固定的條件）</span></td>
+          <td style="font-size:10.5px;">必須保持一致的其他條件，確保結果差異只來自操縱變因</td>
+          <td><div class="write-box"></div><div class="write-box" style="margin-top:4px;"></div><div class="write-box" style="margin-top:4px;"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ STEP 5：數據記錄設計 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge soil">5</div>
+      <div class="section-title">數據記錄——我的調查紀錄表</div>
+      <span class="section-tag">pe-Ⅴc-2</span>
+    </div>
+    <div class="hint-box">
+      📋 <strong>記錄原則：</strong>結果欄只寫你「觀察到的數字或現象」，不要混入你的解釋。記錄時要客觀，例如「種數＝5種」，不是「感覺很多種」。
+    </div>
+    <table class="record-table">
+      <thead>
+        <tr>
+          <th style="width:8%;">樣區</th>
+          <th style="width:18%;">地點描述</th>
+          <th style="width:13%;">光照強度<br><span style="font-weight:400;font-size:9px;">（lux / 強中弱）</span></th>
+          <th style="width:13%;">土壤含水量<br><span style="font-weight:400;font-size:9px;">（乾/略溼/溼）</span></th>
+          <th style="width:13%;">植被覆蓋<br><span style="font-weight:400;font-size:9px;">（多/中/少）</span></th>
+          <th style="width:13%;">人為干擾<br><span style="font-weight:400;font-size:9px;">（高/中/低）</span></th>
+          <th style="width:11%;">節肢動物<br>種數</th>
+          <th style="width:11%;">個體<br>總數</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="label">A</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="label">B</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="label">C</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td class="label">D</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:6px;" class="write-area">
+      <div style="font-size:10px;font-weight:700;color:var(--forest);margin-bottom:3px;">📸 觀察到的生物種類清單（可附簡單素描或描述外觀特徵）</div>
+      <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ STEP 6：圖表分析 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge stone">6</div>
+      <div class="section-title">結果分析——畫出你的數據圖</div>
+      <span class="section-tag">pa-Ⅴc-1 ｜ pa-Ⅴc-2</span>
+    </div>
+    <div class="hint-box">
+      📊 <strong>圖表三要素：</strong>① 圖表標題（說明這張圖要呈現什麼）② X 軸標籤＋單位 ③ Y 軸標籤＋單位。缺少任何一項都是不完整的科學圖表。
+    </div>
+    <div class="chart-area">
+      <div class="chart-box">
+        <div class="chart-title">圖一：請為這張圖命名→ <span style="border-bottom:1px dashed var(--border);display:inline-block;width:70px;"></span></div>
+        <div class="chart-grid"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:2px;">
+          <div style="font-size:9px;color:var(--stone);">Y軸：<span style="border-bottom:1px dashed var(--border);display:inline-block;width:55px;"></span></div>
+          <div style="font-size:9px;color:var(--stone);">X軸：<span style="border-bottom:1px dashed var(--border);display:inline-block;width:55px;"></span></div>
+        </div>
+        <div class="axis-label">＊請以長條圖呈現「各樣區的生物種數」</div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">圖二：請為這張圖命名→ <span style="border-bottom:1px dashed var(--border);display:inline-block;width:70px;"></span></div>
+        <div class="chart-grid"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:2px;">
+          <div style="font-size:9px;color:var(--stone);">Y軸：<span style="border-bottom:1px dashed var(--border);display:inline-block;width:55px;"></span></div>
+          <div style="font-size:9px;color:var(--stone);">X軸：<span style="border-bottom:1px dashed var(--border);display:inline-block;width:55px;"></span></div>
+        </div>
+        <div class="axis-label">＊請以散布圖呈現「非生物因子 vs. 種數」</div>
+      </div>
+    </div>
+
+    <div style="margin-top:8px;" class="write-area">
+      <div style="font-size:10.5px;font-weight:700;color:var(--forest);margin-bottom:3px;">📈 圖表趨勢描述（只說「你看到了什麼」，不要說「你認為是什麼原因」）：</div>
+      <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ STEP 7：結論與反思 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="step-badge dark">7</div>
+      <div class="section-title">結論與反思——假說得到支持了嗎？</div>
+      <span class="section-tag">pa-Ⅴc-2 ｜ pc-Ⅴc-1 ｜ an-Ⅴc-1</span>
+    </div>
+
+    <div class="argument-box">
+      <div class="argument-prompt">🧩 結論撰寫（引用你的數據！避免只說「有影響」或「是對的」）</div>
+      <div style="font-size:10.5px;color:var(--stone);margin-bottom:4px;">根據我的數據，我的假說（ □ 得到支持 　□ 未得到支持 　□ 部分支持 ），理由是：</div>
+      <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      <div style="font-size:9.5px;color:#aaa;margin-top:3px;">鷹架提示：「樣區___的種數為___，樣區___的種數為___，兩者差異___，因此……」</div>
+    </div>
+
+    <div class="reflection-grid">
+      <div class="reflection-card">
+        <div class="reflection-card-title"><span class="dot"></span>實驗的限制（至少寫 2 點）</div>
+        <div style="font-size:10.5px;color:var(--stone);">這次調查可能有哪些因素讓結果不夠準確？</div>
+        <div class="write-line" style="margin-top:5px;"></div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-card-title"><span class="dot" style="background:var(--moss);"></span>改進建議（如果重做一次）</div>
+        <div style="font-size:10.5px;color:var(--stone);">你會如何改善研究設計，使結果更有說服力？</div>
+        <div class="write-line" style="margin-top:5px;"></div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-card-title"><span class="dot" style="background:var(--soil);"></span>新問題（探究永遠有下一步）</div>
+        <div style="font-size:10.5px;color:var(--stone);">這次調查讓你產生了什麼新的好奇心？</div>
+        <div class="write-line" style="margin-top:5px;"></div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-card-title"><span class="dot" style="background:var(--stone);"></span>連結生活（科學與你的世界）</div>
+        <div style="font-size:10.5px;color:var(--stone);">這個發現讓你對校園環境有什麼不同的看法？</div>
+        <div class="write-line" style="margin-top:5px;"></div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ BONUS：科學報告 IMRD 快速寫作區 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div style="background:var(--forest);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.05em;">✦ 進階挑戰</div>
+      <div class="section-title" style="font-size:12px;">科學報告撰寫——IMRD 結構引導</div>
+      <span class="section-tag">pc-Ⅴc-1 ｜ pc-Ⅴc-2</span>
+    </div>
+
+    <div class="imrd-bar">
+      <div class="imrd-cell imrd-I"><span class="letter">I</span><span class="zh">前言</span><span class="q">為什麼值得研究？假說是什麼？</span></div>
+      <div class="imrd-cell imrd-M"><span class="letter">M</span><span class="zh">材料與方法</span><span class="q">別人能照著重做嗎？</span></div>
+      <div class="imrd-cell imrd-R"><span class="letter">R</span><span class="zh">結果</span><span class="q">你看到了什麼？（不解釋）</span></div>
+      <div class="imrd-cell imrd-D"><span class="letter">D</span><span class="zh">討論</span><span class="q">假說成立嗎？有哪些限制？</span></div>
+    </div>
+
+    <div class="imrd-write-grid">
+      <div class="imrd-write-box I">
+        <div class="imrd-write-title">Ⅰ 前言（約 50 字）</div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="imrd-write-box M">
+        <div class="imrd-write-title">Ⅱ 材料與方法（條列重點）</div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="imrd-write-box R">
+        <div class="imrd-write-title">Ⅲ 結果（引用數據，附圖表編號）</div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+      <div class="imrd-write-box D">
+        <div class="imrd-write-title">Ⅳ 討論（含假說評估＋限制）</div>
+        <div class="write-line"></div><div class="write-line"></div><div class="write-line"></div><div class="write-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ SELF-EVAL ══ -->
+  <div class="self-eval">
+    <div class="self-eval-title">🌟 我的自我評估（課後誠實填寫）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+      <div class="eval-row"><span class="eval-label">我能提出可驗證的假說（若…則…因為…）</span><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div></div>
+      <div class="eval-row"><span class="eval-label">我能清楚辨別三種變因</span><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div></div>
+      <div class="eval-row"><span class="eval-label">我的數據記錄客觀、完整</span><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div></div>
+      <div class="eval-row"><span class="eval-label">我的結論有引用具體數據</span><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div></div>
+    </div>
+    <div style="margin-top:5px;">
+      <div style="font-size:10px;font-weight:700;color:var(--forest);">這次最大的收穫 / 最想繼續探究的問題：</div>
+      <div class="write-line" style="margin-top:3px;"></div><div class="write-line"></div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="footer">
+    <div class="footer-badge"><span class="leaf-icon">🌿</span> 自然科學探究與實作 ｜ 校園生物觀察學習單　v1.0</div>
+    <div>對應課綱：po-Ⅴc-1/2 ｜ pe-Ⅴc-1/2 ｜ pa-Ⅴc-1/2 ｜ pc-Ⅴc-1/2 ｜ BLb-Ⅴa-4 ｜ BGc-Ⅴa-5</div>
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>
